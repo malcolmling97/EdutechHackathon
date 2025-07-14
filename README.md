@@ -32,140 +32,95 @@ Start the Vite development server:
 npm run dev
 ```
 
-## Planned Frontend–Backend Integration Requirements
+## API Documentation
 
-The following describes the expected backend endpoints and data contracts that the frontend will require as the project evolves. This is to inform the backend team of upcoming integration needs.
+This project uses a comprehensive REST API design with proper versioning, authentication, and resource organization. The API is organized around the concept of **Folders** (learning units) containing **Spaces** (chat, quiz, or notes sessions) and **Files** (uploaded documents).
 
-### 1. Chat Functionality
+### API Specification
 
-The chat feature allows users to:
-- Create new chat sessions
-- List all existing chats
-- Send messages and receive AI responses (planned: via backend)
-- Delete chats
-- Retrieve chat history
+For complete API documentation, including:
+- URI conventions and versioning
+- Authentication requirements
+- Resource schemas
+- Endpoint catalogue
+- Request/response examples
+- Error codes and handling
+
+See: **[API Specification](./docs/API_SPECIFICATION.md)**
+
+### Key API Concepts
+
+**Resource Hierarchy:**
+```
+User → Folders → Spaces (chat/quiz/notes) → Messages/Quizzes/Notes
+           ↓
+         Files (PDFs, documents)
+```
+
+**Base URL:** `/api/v1`
+
+**Authentication:** JWT Bearer tokens with `X-User-Id` header
+
+**Response Format:** All responses use a consistent JSON envelope pattern
+
+### Core Endpoints Summary
+
+| Resource | Method | Endpoint | Purpose |
+|----------|---------|-----------|---------|
+| **Auth** | POST | `/auth/login` | User authentication |
+| **Folders** | GET | `/folders` | List user folders |
+| **Folders** | POST | `/folders` | Create new folder |
+| **Spaces** | GET | `/folders/{id}/spaces` | List spaces in folder |
+| **Spaces** | POST | `/folders/{id}/spaces` | Create chat/quiz/notes space |
+| **Files** | POST | `/files/upload` | Upload documents |
+| **Chat** | POST | `/spaces/{id}/messages` | Send message & get AI response |
+| **Quiz** | POST | `/spaces/{id}/quizzes` | Generate quiz from files |
+| **Notes** | POST | `/spaces/{id}/notes` | Generate notes from files |
+
+### Frontend Integration Status
 
 **Current Implementation:**
-- All chat data is managed locally in the frontend state.
-- AI responses are static placeholders.
+- Frontend uses local state management
+- Static mock data for AI responses
+- No backend connectivity
 
-**Planned Backend Integration:**
-- All chat data and AI responses will be managed by the backend.
+**Migration Plan:**
+- Replace local state with API calls
+- Implement JWT authentication
+- Add file upload functionality
+- Enable real-time chat streaming
+- Connect quiz and notes generation
 
-**Expected Endpoints:**
-- **Create New Chat**
-  - `POST /api/chats`
-  - Request: `{ "title": "string" }`
-  - Response: `{ "id": "string", "title": "string" }`
+### Development Notes
 
-- **List Chats**
-  - `GET /api/chats`
-  - Response: `[ { "id": "string", "title": "string" } ]`
-
-- **Send Message & Get AI Response**
-  - `POST /api/chat/respond`
-  - Request: `{ "chatId": "string", "message": "string" }`
-  - Response: `{ "response": "string" }`
-
-- **Get Chat History**
-  - `GET /api/chats/{chatId}`
-  - Response: `{ "id": "string", "title": "string", "messages": [ { "sender": "user" | "ai", "text": "string" } ] }`
-
-- **Delete Chat**
-  - `DELETE /api/chats/{chatId}`
-  - Response: `{ "success": true }`
-
-### 2. Projects
-- **List Projects**
-  - **Endpoint:** `GET /api/projects`
-  - **Response:**
-    ```json
-    [
-      { "id": "string", "title": "string" }
-    ]
-    ```
-
-- **Get Project Details**
-  - **Endpoint:** `GET /api/projects/{projectId}`
-  - **Response:**
-    ```json
-    {
-      "id": "string",
-      "title": "string",
-      "summary": "string"
-    }
-    ```
-
-- **Create Project (from summary)**
-  - **Endpoint:** `POST /api/projects`
-  - **Request Body:**
-    ```json
-    {
-      "title": "string",
-      "summary": "string"
-    }
-    ```
-  - **Response:**
-    ```json
-    { "id": "string" }
-    ```
-
-### 3. Quizzes
-- **List Quizzes**
-  - **Endpoint:** `GET /api/quizzes`
-  - **Response:**
-    ```json
-    [
-      { "id": "string", "title": "string" }
-    ]
-    ```
-
-- **Get Quiz Details**
-  - **Endpoint:** `GET /api/quizzes/{quizId}`
-  - **Response:**
-    ```json
-    {
-      "id": "string",
-      "title": "string",
-      "questions": [
-        { "q": "string", "a": "string" }
-      ]
-    }
-    ```
-
-- **Create Quiz (from chat)**
-  - **Endpoint:** `POST /api/quizzes`
-  - **Request Body:**
-    ```json
-    {
-      "title": "string",
-      "questions": [
-        { "q": "string", "a": "string" }
-      ]
-    }
-    ```
-  - **Response:**
-    ```json
-    { "id": "string" }
-    ```
-
----
-
-**Note:** These endpoints and data structures are suggestions based on current and planned frontend features. Please coordinate with the frontend team to finalize contracts and adjust as needed during implementation.
+- The API supports both REST and streaming endpoints
+- File processing includes text extraction and OCR
+- AI features include citation tracking and source references
+- All endpoints include proper error handling and validation
 
 ## File Structure
 
 ```
 <project-root>/
-├── public/               # Static assets (e.g., icons, images)
-├── src/                  # Main source code
-│   ├── components/       # Reusable React components (e.g., CollapsibleSection, MessageBubble)
-│   ├── App.tsx           # Main application component and logic
-│   ├── utils.tsx         # Utility functions (e.g., ID generation)
-│   ├── types.ts          # TypeScript type definitions (Chat, Project, Quiz, etc.)
-│   └── ...               # Other app files (styles, assets)
-├── package.json          # Project metadata and dependencies
-├── tailwind.config.js    # Tailwind CSS configuration
-├── tsconfig.json         # TypeScript configuration
-├── vite.config.ts        # Vite build tool configuration
-└── README.md             # Project documentation
+├── docs/                 # API and development documentation
+│   ├── README.md         # Documentation index and overview
+│   ├── API_SPECIFICATION.md  # Complete REST API reference
+│   └── MIGRATION_GUIDE.md    # Transition guide from legacy API
+├── frontend/             # React frontend application
+│   ├── public/           # Static assets (icons, images)
+│   ├── src/              # Main source code
+│   │   ├── components/   # Reusable React components
+│   │   ├── App.tsx       # Main application component
+│   │   ├── utils.tsx     # Utility functions
+│   │   ├── types.ts      # TypeScript type definitions
+│   │   └── ...           # Other app files
+│   ├── package.json      # Frontend dependencies
+│   ├── tailwind.config.js # Tailwind CSS configuration
+│   ├── tsconfig.json     # TypeScript configuration
+│   └── vite.config.ts    # Vite build tool configuration
+├── backend/              # Node.js/Express backend API
+│   └── ...               # Backend implementation (to be developed)
+├── shared/               # Shared types and utilities
+│   └── ...               # Common code between frontend/backend
+├── .gitignore            # Git ignore rules
+└── README.md             # Project overview and setup
