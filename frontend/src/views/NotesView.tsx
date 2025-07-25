@@ -16,10 +16,13 @@ const NotesView = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [collapsed, setCollapsed] = useState(false);
 
+  const token = localStorage.getItem('token') || '';
+  const userId = localStorage.getItem('userId') || '';
+
   useEffect(() => {
     if (!spaceId) return;
 
-    getNoteBySpaceId(spaceId)
+    getNoteBySpaceId(spaceId, token, userId)
       .then((note) => {
         setNoteId(note.id);
         setContent(note.content);
@@ -29,7 +32,7 @@ const NotesView = () => {
   }, [spaceId]);
 
   const debouncedSave = debounce((text: string) => {
-    if (noteId) saveNote(noteId, text).catch(console.error);
+    if (noteId) saveNote(noteId, text, token, userId).catch(console.error);
   }, 1000);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

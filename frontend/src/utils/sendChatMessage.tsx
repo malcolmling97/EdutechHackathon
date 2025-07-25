@@ -6,7 +6,9 @@ export const sendChatMessage = async ({
   file,
   folderId,
   role = 'user',
-}: SendChatOptions): Promise<ChatMessage> => {
+  token,
+  userId,
+}: SendChatOptions & { token: string; userId: string }): Promise<ChatMessage> => {
   let sources: MessageSource[] = [];
 
   if (file) {
@@ -18,8 +20,9 @@ export const sendChatMessage = async ({
     formData.append('files', file);
     formData.append('folderId', folderId);
 
-    const fileRes = await fetch('/files/upload', {
+    const fileRes = await fetch('/api/v1/files/upload', {
       method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'X-User-Id': userId },
       body: formData,
     });
 
@@ -28,8 +31,9 @@ export const sendChatMessage = async ({
       throw new Error(`Upload failed: ${errorText}`);
     }
 
-    const uploadedFile: FileMetadata = await fileRes.json();
-    sources.push({ fileId: uploadedFile.id, page: 1 }); // assuming page 1 for now
+    const fileJson = await fileRes.json();
+    const uploadedFile: FileMetadata = fileJson.data ? fileJson.data[0] : fileJson; // API returns { data: [...] }
+    sources.push({ fileId: uploadedFile.id, page: 1 });
   }
 
   const messagePayload: Omit<ChatMessage, 'id'> = {
@@ -40,9 +44,13 @@ export const sendChatMessage = async ({
     createdAt: new Date().toISOString(),
   };
 
-  const msgRes = await fetch(`/spaces/${spaceId}/messages`, {
+  const msgRes = await fetch(`/api/v1/spaces/${spaceId}/messages`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      'X-User-Id': userId,
+    },
     body: JSON.stringify(messagePayload),
   });
 
@@ -51,6 +59,6 @@ export const sendChatMessage = async ({
     throw new Error(`Message send failed: ${errorText}`);
   }
 
-  const createdMessage: ChatMessage = await msgRes.json();
-  return createdMessage;
+  const msgJson = await msgRes.json();
+  return msgJson.data;
 };
