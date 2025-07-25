@@ -64,3 +64,9 @@ export interface GenerateQuizOptions {
     token: string;
     userId: string;
   }
+
+  export interface Flashcard {
+    id: string;
+    front: string;
+    back: string;
+  }  

@@ -44,13 +44,6 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
 
   // Save chats to localStorage whenever they change and/or sync with backend
   useEffect(() => {
-    // TODO: Optionally, send a POST/PUT request to your backend to update the user's chat list
-    // Example:
-    // fetch('/api/chats', {
-    //   method: 'PUT',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(chats),
-    // });
     localStorage.setItem(CHAT_LIST_KEY, JSON.stringify(chats));
   }, [chats]);
 
@@ -58,13 +51,6 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
   useEffect(() => {
     const listener = (e: Event) => {
       const detail = (e as CustomEvent).detail;
-      // TODO: Optionally, send a POST request to your backend to create a new chat session
-      // Example:
-      // fetch('/api/chats', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ id: detail.id, title: detail.title }),
-      // });
       const newChat = {
         id: detail.id, // Use the id from the event
         title: detail.title || `New Chat ${chats.length + 1}`,
@@ -92,7 +78,7 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
         <nav className="flex flex-col gap-2 mt-2">
           {/*<SidebarLink text="Resources" icon={ResourcesIcon} isCollapsed={isCollapsed} />*/}
           <SidebarLink text="Chats" icon={ChatsIcon} isCollapsed={isCollapsed} to="/" />
-          <SidebarLink text="Notes" icon={NotesIcon} isCollapsed={isCollapsed} />
+          <SidebarLink text="Notes" icon={NotesIcon} isCollapsed={isCollapsed} to="/notes"/>
           <SidebarLink text="Study" icon={StudyIcon} isCollapsed={isCollapsed} to="/study"/>
         </nav>
         <hr className="border-t border-border-primary -mx-2 mt-2" />

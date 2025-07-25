@@ -15,6 +15,8 @@ export const QuizIcon   = ({ className = "w-5 h-5" }) => <FaQuestionCircle class
 export const FlashcardIcon  = ({ className = "w-5 h-5" }) => <FaRegClone className={className} />;
 export const OpenEndedIcon  = ({ className = "w-5 h-5" }) => <FaRegEdit className={className} />;
 export const StudiesIcon   = ({ className = "w-5 h-5" }) => <FaRegListAlt className={className} />;
+export const ChevronRight   = ({ className = "w-5 h-5" }) => <FaChevronRight className={className} />;
+export const ChevronLeft   = ({ className = "w-5 h-5" }) => <FaChevronLeft className={className} />;
 
 export const SidebarToggleIcon = ({ isCollapsed, className = "w-4 h-4" }: { isCollapsed: boolean; className?: string }) => {
   const Icon = isCollapsed ? FaChevronRight : FaChevronLeft;
