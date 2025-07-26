@@ -8,7 +8,7 @@ This document outlines all the data flows for the EdutechHackathon backend API b
 2. [Authentication Data Flows](#2-authentication-data-flows)
 3. [Folder Management Data Flows](#3-folder-management-data-flows)
 4. [Space Management Data Flows](#4-space-management-data-flows)
-5. [opip](#5-file-management-data-flows)
+5. [File Management Data Flows](#5-file-management-data-flows)
 6. [Chat Data Flows](#6-chat-data-flows)
 7. [Quiz Data Flows](#7-quiz-data-flows)
 8. [Notes Data Flows](#8-notes-data-flows)

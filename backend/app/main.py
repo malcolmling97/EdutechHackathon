@@ -16,7 +16,7 @@ from fastapi.responses import JSONResponse
 
 from app.core.config import settings
 from app.core.database import create_tables
-from app.api.routes import auth, folders, spaces, files
+from app.api.routes import auth, folders, spaces, files, chat
 
 
 class UUIDEncoder(json.JSONEncoder):
@@ -130,6 +130,12 @@ def create_application() -> FastAPI:
         files.router,
         prefix=f"{settings.api_v1_prefix}/files",
         tags=["files"],
+    )
+    
+    app.include_router(
+        chat.router,
+        prefix=f"{settings.api_v1_prefix}",
+        tags=["chat"],
     )
     
     return app

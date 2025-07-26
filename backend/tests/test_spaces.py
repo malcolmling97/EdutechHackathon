@@ -128,10 +128,10 @@ class TestListSpaces:
         data = response.json()
         assert "error" in data
     
-    def test_list_spaces_other_user_folder(self, client: TestClient, sample_user_2_data, created_folder):
+    def test_list_spaces_other_user_folder(self, client: TestClient, sample_user_data_2, created_folder):
         """Test listing spaces for folder owned by another user."""
         # Register second user
-        register_response = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response = client.post("/api/v1/auth/register", json=sample_user_data_2)
         token_2 = register_response.json()["data"]["token"]
         headers_2 = {"Authorization": f"Bearer {token_2}"}
         
@@ -288,10 +288,10 @@ class TestCreateSpace:
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
     
-    def test_create_space_other_user_folder(self, client: TestClient, sample_user_2_data, created_folder):
+    def test_create_space_other_user_folder(self, client: TestClient, sample_user_data_2, created_folder):
         """Test creating space in folder owned by another user."""
         # Register second user
-        register_response = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response = client.post("/api/v1/auth/register", json=sample_user_data_2)
         token_2 = register_response.json()["data"]["token"]
         headers_2 = {"Authorization": f"Bearer {token_2}"}
         
@@ -349,10 +349,10 @@ class TestGetSpace:
         data = response.json()
         assert "error" in data
     
-    def test_get_space_other_user(self, client: TestClient, sample_user_2_data, created_space):
+    def test_get_space_other_user(self, client: TestClient, sample_user_data_2, created_space):
         """Test accessing space owned by another user."""
         # Register second user
-        register_response = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response = client.post("/api/v1/auth/register", json=sample_user_data_2)
         token_2 = register_response.json()["data"]["token"]
         headers_2 = {"Authorization": f"Bearer {token_2}"}
         
@@ -441,10 +441,10 @@ class TestUpdateSpace:
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
     
-    def test_update_space_other_user(self, client: TestClient, sample_user_2_data, created_space):
+    def test_update_space_other_user(self, client: TestClient, sample_user_data_2, created_space):
         """Test updating space owned by another user."""
         # Register second user
-        register_response = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response = client.post("/api/v1/auth/register", json=sample_user_data_2)
         token_2 = register_response.json()["data"]["token"]
         headers_2 = {"Authorization": f"Bearer {token_2}"}
         
@@ -485,10 +485,10 @@ class TestDeleteSpace:
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
     
-    def test_delete_space_other_user(self, client: TestClient, sample_user_2_data, created_space):
+    def test_delete_space_other_user(self, client: TestClient, sample_user_data_2, created_space):
         """Test deleting space owned by another user."""
         # Register second user
-        register_response = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response = client.post("/api/v1/auth/register", json=sample_user_data_2)
         token_2 = register_response.json()["data"]["token"]
         headers_2 = {"Authorization": f"Bearer {token_2}"}
         
@@ -531,11 +531,11 @@ class TestSpaceOwnership:
         space_response = client.get(f"/api/v1/spaces/{space_id}", headers=auth_headers)
         assert space_response.json()["data"]["folderId"] == folder1_id
     
-    def test_user_isolation_spaces(self, client: TestClient, sample_user_data, sample_user_2_data):
+    def test_user_isolation_spaces(self, client: TestClient, sample_user_data, sample_user_data_2):
         """Test that users can only see spaces in their own folders."""
         # Register two users
         register_response_1 = client.post("/api/v1/auth/register", json=sample_user_data)
-        register_response_2 = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response_2 = client.post("/api/v1/auth/register", json=sample_user_data_2)
         
         token_1 = register_response_1.json()["data"]["token"]
         token_2 = register_response_2.json()["data"]["token"]

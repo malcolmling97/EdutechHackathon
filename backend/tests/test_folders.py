@@ -263,10 +263,10 @@ class TestGetFolder:
         data = response.json()
         assert "error" in data
     
-    def test_get_folder_other_user(self, client: TestClient, sample_user_2_data, created_folder):
+    def test_get_folder_other_user(self, client: TestClient, sample_user_data_2, created_folder):
         """Test accessing folder owned by another user."""
         # Register second user
-        register_response = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response = client.post("/api/v1/auth/register", json=sample_user_data_2)
         token_2 = register_response.json()["data"]["token"]
         headers_2 = {"Authorization": f"Bearer {token_2}"}
         
@@ -354,10 +354,10 @@ class TestUpdateFolder:
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
     
-    def test_update_folder_other_user(self, client: TestClient, sample_user_2_data, created_folder):
+    def test_update_folder_other_user(self, client: TestClient, sample_user_data_2, created_folder):
         """Test updating folder owned by another user."""
         # Register second user
-        register_response = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response = client.post("/api/v1/auth/register", json=sample_user_data_2)
         token_2 = register_response.json()["data"]["token"]
         headers_2 = {"Authorization": f"Bearer {token_2}"}
         
@@ -398,10 +398,10 @@ class TestDeleteFolder:
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
     
-    def test_delete_folder_other_user(self, client: TestClient, sample_user_2_data, created_folder):
+    def test_delete_folder_other_user(self, client: TestClient, sample_user_data_2, created_folder):
         """Test deleting folder owned by another user."""
         # Register second user
-        register_response = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response = client.post("/api/v1/auth/register", json=sample_user_data_2)
         token_2 = register_response.json()["data"]["token"]
         headers_2 = {"Authorization": f"Bearer {token_2}"}
         
@@ -421,18 +421,19 @@ class TestDeleteFolder:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         
         # Verify space is also deleted (cascade)
+        # Note: Returns 403 instead of 404 for security (doesn't leak resource existence)
         space_response = client.get(f"/api/v1/spaces/{created_space.id}", headers=auth_headers)
-        assert space_response.status_code == status.HTTP_404_NOT_FOUND
+        assert space_response.status_code == status.HTTP_403_FORBIDDEN
 
 
 class TestFolderOwnership:
     """Test folder ownership and access control."""
     
-    def test_user_isolation(self, client: TestClient, sample_user_data, sample_user_2_data):
+    def test_user_isolation(self, client: TestClient, sample_user_data, sample_user_data_2):
         """Test that users can only see their own folders."""
         # Register two users
         register_response_1 = client.post("/api/v1/auth/register", json=sample_user_data)
-        register_response_2 = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response_2 = client.post("/api/v1/auth/register", json=sample_user_data_2)
         
         token_1 = register_response_1.json()["data"]["token"]
         token_2 = register_response_2.json()["data"]["token"]

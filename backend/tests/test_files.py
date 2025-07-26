@@ -107,10 +107,10 @@ class TestFileUpload:
         response_data = response.json()
         assert "error" in response_data
     
-    def test_upload_file_other_user_folder(self, client: TestClient, sample_user_2_data, created_folder, temp_test_file):
+    def test_upload_file_other_user_folder(self, client: TestClient, sample_user_data_2, created_folder, temp_test_file):
         """Test file upload to folder owned by another user."""
         # Register second user
-        register_response = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response = client.post("/api/v1/auth/register", json=sample_user_data_2)
         token_2 = register_response.json()["data"]["token"]
         headers_2 = {"Authorization": f"Bearer {token_2}"}
         
@@ -299,10 +299,10 @@ class TestListFiles:
         data = response.json()
         assert "error" in data
     
-    def test_list_files_other_user_folder(self, client: TestClient, sample_user_2_data, created_folder):
+    def test_list_files_other_user_folder(self, client: TestClient, sample_user_data_2, created_folder):
         """Test listing files for folder owned by another user."""
         # Register second user
-        register_response = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response = client.post("/api/v1/auth/register", json=sample_user_data_2)
         token_2 = register_response.json()["data"]["token"]
         headers_2 = {"Authorization": f"Bearer {token_2}"}
         
@@ -367,7 +367,7 @@ class TestGetFileMetadata:
         """Test file metadata retrieval without authentication."""
         # First upload a file (as authenticated user)
         # Register a user first
-        user_data = {"email": "test@example.com", "password": "password123", "name": "Test User"}
+        user_data = {"email": "testfile1@example.com", "password": "password123", "name": "Test User"}
         register_response = client.post("/api/v1/auth/register", json=user_data)
         token = register_response.json()["data"]["token"]
         headers = {"Authorization": f"Bearer {token}"}
@@ -395,7 +395,7 @@ class TestGetFileMetadata:
         data = response.json()
         assert "error" in data
     
-    def test_get_file_metadata_other_user(self, client: TestClient, sample_user_2_data, created_folder, temp_test_file, auth_headers):
+    def test_get_file_metadata_other_user(self, client: TestClient, sample_user_data_2, created_folder, temp_test_file, auth_headers):
         """Test accessing file metadata owned by another user."""
         # Upload file as first user
         with open(temp_test_file, 'rb') as f:
@@ -408,7 +408,7 @@ class TestGetFileMetadata:
         file_id = upload_response.json()["data"][0]["id"]
         
         # Register second user
-        register_response = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response = client.post("/api/v1/auth/register", json=sample_user_data_2)
         token_2 = register_response.json()["data"]["token"]
         headers_2 = {"Authorization": f"Bearer {token_2}"}
         
@@ -463,10 +463,10 @@ class TestGetFileContent:
         data = response.json()
         assert "error" in data
     
-    def test_get_file_content_no_auth(self, client: TestClient, created_folder, temp_test_file):
+    def test_get_file_content_no_auth(self, client: TestClient, created_folder, temp_test_file, created_user, auth_headers):
         """Test file content retrieval without authentication."""
         # First create and upload a file (need a user for this)
-        user_data = {"email": "test@example.com", "password": "password123", "name": "Test User"}
+        user_data = {"email": "testfile2@example.com", "password": "password123", "name": "Test User"}
         register_response = client.post("/api/v1/auth/register", json=user_data)
         token = register_response.json()["data"]["token"]
         headers = {"Authorization": f"Bearer {token}"}
@@ -570,10 +570,10 @@ class TestDeleteFile:
         
         assert response.status_code == status.HTTP_404_NOT_FOUND
     
-    def test_delete_file_no_auth(self, client: TestClient, created_folder, temp_test_file):
+    def test_delete_file_no_auth(self, client: TestClient, created_folder, temp_test_file, auth_headers):
         """Test file deletion without authentication."""
         # First create and upload a file (need a user for this)
-        user_data = {"email": "test@example.com", "password": "password123", "name": "Test User"}
+        user_data = {"email": "testfile3@example.com", "password": "password123", "name": "Test User"}
         register_response = client.post("/api/v1/auth/register", json=user_data)
         token = register_response.json()["data"]["token"]
         headers = {"Authorization": f"Bearer {token}"}
@@ -601,7 +601,7 @@ class TestDeleteFile:
         data = response.json()
         assert "error" in data
     
-    def test_delete_file_other_user(self, client: TestClient, sample_user_2_data, created_folder, temp_test_file, auth_headers):
+    def test_delete_file_other_user(self, client: TestClient, sample_user_data_2, created_folder, temp_test_file, auth_headers):
         """Test deleting file owned by another user."""
         # Upload file as first user
         with open(temp_test_file, 'rb') as f:
@@ -614,7 +614,7 @@ class TestDeleteFile:
         file_id = upload_response.json()["data"][0]["id"]
         
         # Register second user
-        register_response = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response = client.post("/api/v1/auth/register", json=sample_user_data_2)
         token_2 = register_response.json()["data"]["token"]
         headers_2 = {"Authorization": f"Bearer {token_2}"}
         
@@ -664,11 +664,11 @@ class TestFileOwnership:
         file_response = client.get(f"/api/v1/files/{file_id}", headers=auth_headers)
         assert file_response.json()["data"]["folder_id"] == folder1_id
     
-    def test_user_isolation_files(self, client: TestClient, sample_user_data, sample_user_2_data, temp_test_file):
+    def test_user_isolation_files(self, client: TestClient, sample_user_data, sample_user_data_2, temp_test_file):
         """Test that users can only see files in their own folders."""
         # Register two users
         register_response_1 = client.post("/api/v1/auth/register", json=sample_user_data)
-        register_response_2 = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response_2 = client.post("/api/v1/auth/register", json=sample_user_data_2)
         
         token_1 = register_response_1.json()["data"]["token"]
         token_2 = register_response_2.json()["data"]["token"]

@@ -332,11 +332,11 @@ class TestAuthenticationFlow:
         profile_response = client.get("/api/v1/auth/profile", headers=login_headers)
         assert profile_response.status_code == status.HTTP_401_UNAUTHORIZED
     
-    def test_multiple_user_isolation(self, client: TestClient, sample_user_data, sample_user_2_data):
+    def test_multiple_user_isolation(self, client: TestClient, sample_user_data, sample_user_data_2):
         """Test that multiple users are properly isolated."""
         # Register two users
         register_response_1 = client.post("/api/v1/auth/register", json=sample_user_data)
-        register_response_2 = client.post("/api/v1/auth/register", json=sample_user_2_data)
+        register_response_2 = client.post("/api/v1/auth/register", json=sample_user_data_2)
         
         assert register_response_1.status_code == status.HTTP_201_CREATED
         assert register_response_2.status_code == status.HTTP_201_CREATED
@@ -358,5 +358,5 @@ class TestAuthenticationFlow:
         user_2_data = profile_2.json()["data"]["user"]
         
         assert user_1_data["email"] == sample_user_data["email"]
-        assert user_2_data["email"] == sample_user_2_data["email"]
+        assert user_2_data["email"] == sample_user_data_2["email"]
         assert user_1_data["id"] != user_2_data["id"] 
