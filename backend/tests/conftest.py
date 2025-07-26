@@ -421,3 +421,188 @@ def chat_space_with_many_messages(db_session, chat_space):
         db_session.refresh(message)
     
     return chat_space 
+
+
+@pytest.fixture
+def other_user(created_user_2):
+    """Alias for created_user_2 to provide other_user for permission testing."""
+    return created_user_2
+
+
+@pytest.fixture
+def uploaded_files(test_db, db_session, created_folder):
+    """Create sample uploaded files for testing."""
+    files = []
+    
+    # Create sample files with text content
+    for i in range(3):
+        file = File(
+            id=uuid.uuid4(),
+            folder_id=created_folder.id,
+            name=f"test_file_{i}.pdf",
+            mime_type="application/pdf",
+            size=1024000 + i * 100000,  # Different sizes
+            path=f"test_file_{i}.pdf",
+            text_content=f"This is the extracted text content for file {i}. " * 100,
+            vector_ids=[],
+            created_at=datetime.utcnow()
+        )
+        files.append(file)
+    
+    for file in files:
+        db_session.add(file)
+    
+    db_session.commit()
+    
+    for file in files:
+        db_session.refresh(file)
+    
+    return files
+
+
+@pytest.fixture  
+def other_user_files(test_db, db_session, other_user, other_user_folder):
+    """Create files owned by another user for permission testing."""
+    files = []
+    
+    for i in range(2):
+        file = File(
+            id=uuid.uuid4(),
+            folder_id=other_user_folder.id,
+            name=f"other_user_file_{i}.pdf",
+            mime_type="application/pdf", 
+            size=1024000,
+            path=f"other_user_file_{i}.pdf",
+            text_content=f"Other user's file content {i}.",
+            vector_ids=[],
+            created_at=datetime.utcnow()
+        )
+        files.append(file)
+    
+    for file in files:
+        db_session.add(file)
+    
+    db_session.commit()
+    
+    for file in files:
+        db_session.refresh(file)
+    
+    return files
+
+
+@pytest.fixture
+def created_quiz(test_db, db_session, created_space, uploaded_files):
+    """Create a sample quiz for testing."""
+    from app.models.quiz import Quiz
+    
+    # Sample quiz questions matching the data flows specification
+    sample_questions = [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "prompt": "What is photosynthesis?",
+            "choices": [
+                "Process of converting light to chemical energy",
+                "Process of cellular respiration", 
+                "Process of protein synthesis",
+                "Process of cell division"
+            ],
+            "answer": "A"
+        },
+        {
+            "id": "q2", 
+            "type": "tf",
+            "prompt": "Chlorophyll is green.",
+            "answer": True
+        },
+        {
+            "id": "q3",
+            "type": "short_answer",
+            "prompt": "Explain the Calvin cycle in 2 sentences.",
+            "answer": "The Calvin cycle is the light-independent reaction of photosynthesis. It produces glucose from CO2 using ATP and NADPH."
+        }
+    ]
+    
+    quiz = Quiz(
+        id=uuid.uuid4(),
+        space_id=created_space.id,
+        title="Sample Biology Quiz",
+        questions=sample_questions,
+        file_ids=[str(uploaded_files[0].id), str(uploaded_files[1].id)],
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(quiz)
+    db_session.commit()
+    db_session.refresh(quiz)
+    
+    return quiz
+
+
+@pytest.fixture
+def other_user_quiz(test_db, db_session, other_user_space, other_user_files):
+    """Create a quiz owned by another user for permission testing."""
+    from app.models.quiz import Quiz
+    
+    sample_questions = [
+        {
+            "id": "q1",
+            "type": "mcq", 
+            "prompt": "What is mitosis?",
+            "choices": ["Cell division", "Cell death", "Cell growth", "Cell repair"],
+            "answer": "A"
+        }
+    ]
+    
+    quiz = Quiz(
+        id=uuid.uuid4(),
+        space_id=other_user_space.id,
+        title="Other User's Quiz", 
+        questions=sample_questions,
+        file_ids=[str(other_user_files[0].id)],
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(quiz)
+    db_session.commit() 
+    db_session.refresh(quiz)
+    
+    return quiz
+
+
+@pytest.fixture
+def other_user_space(test_db, db_session, other_user_folder):
+    """Create a space owned by another user for permission testing."""
+    space = Space(
+        id=uuid.uuid4(),
+        folder_id=other_user_folder.id,
+        type=SpaceType.quiz,
+        title="Other User's Quiz Space",
+        settings={},
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    
+    db_session.add(space)
+    db_session.commit()
+    db_session.refresh(space)
+    
+    return space
+
+
+@pytest.fixture
+def other_user_folder(test_db, db_session, other_user):
+    """Create a folder owned by another user for permission testing."""
+    folder = Folder(
+        id=uuid.uuid4(),
+        owner_id=other_user.id,
+        title="Other User's Folder",
+        description="Folder for testing permissions",
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(folder)
+    db_session.commit()
+    db_session.refresh(folder)
+    
+    return folder 

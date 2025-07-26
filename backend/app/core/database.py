@@ -56,7 +56,7 @@ def create_tables():
     Create all database tables.
     """
     # Import models to register them with SQLAlchemy
-    from app.models import user, folder, space, file, chat_message
+    from app.models import user, folder, space, file, chat_message, quiz
     
     Base.metadata.create_all(bind=engine)
 
