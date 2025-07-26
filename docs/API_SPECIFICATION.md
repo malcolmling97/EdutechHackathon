@@ -77,7 +77,7 @@ All successful responses wrap data, while errors share a uniform shape.
 {
   "id": "uuid",
   "folderId": "uuid",
-  "type": "chat | quiz | notes",
+  "type": "chat | quiz | notes | openended | flashcards | studyguide",
   "title": "Photosynthesis Q&A",
   "settings": { /* per-type options */ },
   "createdAt": "ISO-8601"
@@ -146,6 +146,140 @@ All successful responses wrap data, while errors share a uniform shape.
 }
 ```
 
+### 4.8 Open-ended Question
+
+```json
+{
+  "id": "uuid",
+  "spaceId": "uuid",
+  "title": "Chapter 3 Long Questions",
+  "questions": [
+    {
+      "id": "uuid",
+      "prompt": "Explain the process of photosynthesis in detail, including the light-dependent and light-independent reactions.",
+      "maxWords": 500,
+      "rubric": {
+        "criteria": [
+          {
+            "name": "Understanding of light reactions",
+            "weight": 0.3,
+            "description": "Demonstrates clear understanding of photosystem I and II"
+          },
+          {
+            "name": "Calvin cycle explanation",
+            "weight": 0.3,
+            "description": "Accurately describes the Calvin cycle steps"
+          },
+          {
+            "name": "Overall coherence",
+            "weight": 0.4,
+            "description": "Answer is well-structured and coherent"
+          }
+        ]
+      }
+    }
+  ],
+  "createdAt": "ISO-8601"
+}
+```
+
+### 4.9 Open-ended Answer & Grade
+
+```json
+{
+  "id": "uuid",
+  "questionId": "uuid",
+  "userId": "uuid",
+  "answer": "Photosynthesis is a complex process...",
+  "wordCount": 487,
+  "grade": {
+    "totalScore": 85,
+    "maxScore": 100,
+    "breakdown": [
+      {
+        "criterion": "Understanding of light reactions",
+        "score": 25,
+        "maxScore": 30,
+        "feedback": "Good explanation of photosystems but missing detail on electron transport chain"
+      }
+    ],
+    "overallFeedback": "Strong answer with good understanding of the key concepts...",
+    "gradedAt": "ISO-8601"
+  },
+  "submittedAt": "ISO-8601"
+}
+```
+
+### 4.10 Flashcard
+
+```json
+{
+  "id": "uuid",
+  "spaceId": "uuid",
+  "title": "Biology Terms Set 1",
+  "cards": [
+    {
+      "id": "uuid",
+      "front": "What is chlorophyll?",
+      "back": "A green pigment found in plants that captures light energy for photosynthesis",
+      "difficulty": "easy | medium | hard",
+      "tags": ["photosynthesis", "pigments"]
+    }
+  ],
+  "createdAt": "ISO-8601",
+  "updatedAt": "ISO-8601"
+}
+```
+
+### 4.11 Study Guide
+
+```json
+{
+  "id": "uuid",
+  "spaceId": "uuid",
+  "title": "Final Exam Study Plan",
+  "deadline": "ISO-8601",
+  "totalStudyHours": 40,
+  "schedule": [
+    {
+      "id": "uuid",
+      "date": "ISO-8601",
+      "startTime": "09:00",
+      "endTime": "11:00",
+      "topic": "Photosynthesis",
+      "activities": [
+        {
+          "type": "review",
+          "resourceId": "uuid",
+          "resourceType": "file",
+          "duration": 60
+        },
+        {
+          "type": "flashcards",
+          "resourceId": "uuid",
+          "resourceType": "flashcard",
+          "duration": 60
+        }
+      ],
+      "completed": false
+    }
+  ],
+  "preferences": {
+    "dailyStudyHours": 2,
+    "preferredTimes": ["morning", "evening"],
+    "breakInterval": 25,
+    "studyMethods": ["reading", "flashcards", "practice"]
+  },
+  "progress": {
+    "completedHours": 12,
+    "completedSessions": 6,
+    "totalSessions": 20
+  },
+  "createdAt": "ISO-8601",
+  "updatedAt": "ISO-8601"
+}
+```
+
 ## 5. Endpoint Catalogue
 
 ### 5.1 Authentication
@@ -199,7 +333,7 @@ All successful responses wrap data, while errors share a uniform shape.
 
 | Method | Path | Purpose |
 | :---- | :---- | :---- |
-| POST | `/spaces/{spaceId}/quizzes` | Generate quiz from selected fileIds + params |
+| POST | `/spaces/{spaceId}/quizzes` | Generate quiz from selected fields + params |
 | GET | `/spaces/{spaceId}/quizzes` | List quizzes |
 | GET | `/quizzes/{id}` | Quiz detail |
 | POST | `/quizzes/{id}/submit` | Grade answers |
@@ -214,6 +348,39 @@ All successful responses wrap data, while errors share a uniform shape.
 | GET | `/notes/{id}` | Retrieve note |
 | PATCH | `/notes/{id}` | Update content |
 | DELETE | `/notes/{id}` | Delete note |
+
+### 5.8 Open-ended Questions
+
+| Method | Path | Purpose |
+| :---- | :---- | :---- |
+| POST | `/spaces/{spaceId}/openended` | Generate open-ended questions |
+| GET | `/spaces/{spaceId}/openended` | List open-ended question sets |
+| GET | `/openended/{id}` | Retrieve question set |
+| POST | `/openended/{id}/submit` | Submit answers for AI grading |
+| GET | `/openended/{id}/answers` | Get user's submitted answers and grades |
+| DELETE | `/openended/{id}` | Delete question set |
+
+### 5.9 Flashcards
+
+| Method | Path | Purpose |
+| :---- | :---- | :---- |
+| POST | `/spaces/{spaceId}/flashcards` | Generate flashcard deck |
+| GET | `/spaces/{spaceId}/flashcards` | List flashcard decks |
+| GET | `/flashcards/{id}` | Retrieve flashcard deck |
+| PATCH | `/flashcards/{id}` | Update deck or individual cards |
+| DELETE | `/flashcards/{id}` | Delete flashcard deck |
+| POST | `/flashcards/{id}/shuffle` | Get shuffled card order for study session |
+
+### 5.10 Study Guides
+
+| Method | Path | Purpose |
+| :---- | :---- | :---- |
+| POST | `/spaces/{spaceId}/studyguides` | Create study schedule |
+| GET | `/spaces/{spaceId}/studyguides` | List study guides |
+| GET | `/studyguides/{id}` | Retrieve study guide |
+| PATCH | `/studyguides/{id}` | Update schedule or mark sessions complete |
+| DELETE | `/studyguides/{id}` | Delete study guide |
+| POST | `/studyguides/{id}/sessions/{sessionId}/complete` | Mark study session as completed |
 
 ## 6. Example Contracts
 
@@ -353,6 +520,234 @@ Content-Type: application/json
 }
 ```
 
+### 6.6 Generate Open-ended Questions
+
+**Request**
+```http
+POST /api/v1/spaces/bd89/openended
+Content-Type: application/json
+
+{
+  "title": "Photosynthesis Essay Questions",
+  "fileIds": ["uuid1", "uuid2"],
+  "questionCount": 3,
+  "difficulty": "medium",
+  "maxWords": 500,
+  "topics": ["light reactions", "calvin cycle", "chloroplast structure"]
+}
+```
+
+**Success 201**
+```json
+{
+  "data": {
+    "id": "openended-uuid",
+    "spaceId": "bd89",
+    "title": "Photosynthesis Essay Questions",
+    "questions": [
+      {
+        "id": "q1",
+        "prompt": "Explain the process of photosynthesis in detail, including the light-dependent and light-independent reactions.",
+        "maxWords": 500,
+        "rubric": {
+          "criteria": [
+            {
+              "name": "Understanding of light reactions",
+              "weight": 0.3,
+              "description": "Demonstrates clear understanding of photosystem I and II"
+            },
+            {
+              "name": "Calvin cycle explanation", 
+              "weight": 0.3,
+              "description": "Accurately describes the Calvin cycle steps"
+            },
+            {
+              "name": "Overall coherence",
+              "weight": 0.4,
+              "description": "Answer is well-structured and coherent"
+            }
+          ]
+        }
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z"
+  }
+}
+```
+
+### 6.7 Submit Open-ended Answer
+
+**Request**
+```http
+POST /api/v1/openended/openended-uuid/submit
+Content-Type: application/json
+
+{
+  "answers": [
+    {
+      "questionId": "q1",
+      "answer": "Photosynthesis is a complex biological process that converts light energy into chemical energy..."
+    }
+  ]
+}
+```
+
+**Success 201**
+```json
+{
+  "data": {
+    "id": "answer-uuid",
+    "questionId": "q1",
+    "userId": "user-uuid",
+    "answer": "Photosynthesis is a complex biological process...",
+    "wordCount": 487,
+    "grade": {
+      "totalScore": 85,
+      "maxScore": 100,
+      "breakdown": [
+        {
+          "criterion": "Understanding of light reactions",
+          "score": 25,
+          "maxScore": 30,
+          "feedback": "Good explanation of photosystems but missing detail on electron transport chain"
+        },
+        {
+          "criterion": "Calvin cycle explanation",
+          "score": 27,
+          "maxScore": 30,
+          "feedback": "Excellent description of the Calvin cycle steps"
+        },
+        {
+          "criterion": "Overall coherence",
+          "score": 33,
+          "maxScore": 40,
+          "feedback": "Well-structured answer with logical flow"
+        }
+      ],
+      "overallFeedback": "Strong answer with good understanding of the key concepts. Consider adding more detail about the electron transport chain.",
+      "gradedAt": "2025-01-15T10:35:00Z"
+    },
+    "submittedAt": "2025-01-15T10:30:00Z"
+  }
+}
+```
+
+### 6.8 Generate Flashcards
+
+**Request**
+```http
+POST /api/v1/spaces/bd89/flashcards
+Content-Type: application/json
+
+{
+  "title": "Biology Terms - Chapter 3",
+  "fileIds": ["uuid1", "uuid2"],
+  "cardCount": 20,
+  "difficulty": "mixed",
+  "topics": ["photosynthesis", "cellular respiration", "chloroplasts"]
+}
+```
+
+**Success 201**
+```json
+{
+  "data": {
+    "id": "flashcard-uuid",
+    "spaceId": "bd89",
+    "title": "Biology Terms - Chapter 3",
+    "cards": [
+      {
+        "id": "card1",
+        "front": "What is chlorophyll?",
+        "back": "A green pigment found in plants that captures light energy for photosynthesis",
+        "difficulty": "easy",
+        "tags": ["photosynthesis", "pigments"]
+      },
+      {
+        "id": "card2",
+        "front": "Where does the Calvin cycle occur?",
+        "back": "In the stroma of chloroplasts",
+        "difficulty": "medium",
+        "tags": ["calvin cycle", "chloroplasts"]
+      }
+    ],
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-01-15T10:30:00Z"
+  }
+}
+```
+
+### 6.9 Create Study Guide
+
+**Request**
+```http
+POST /api/v1/spaces/bd89/studyguides
+Content-Type: application/json
+
+{
+  "title": "Final Exam Study Plan",
+  "deadline": "2025-01-30T09:00:00Z",
+  "preferences": {
+    "dailyStudyHours": 2,
+    "preferredTimes": ["morning", "evening"],
+    "breakInterval": 25,
+    "studyMethods": ["reading", "flashcards", "practice"]
+  },
+  "fileIds": ["uuid1", "uuid2"],
+  "topics": ["photosynthesis", "cellular respiration", "genetics"]
+}
+```
+
+**Success 201**
+```json
+{
+  "data": {
+    "id": "studyguide-uuid",
+    "spaceId": "bd89",
+    "title": "Final Exam Study Plan",
+    "deadline": "2025-01-30T09:00:00Z",
+    "totalStudyHours": 40,
+    "schedule": [
+      {
+        "id": "session1",
+        "date": "2025-01-16T00:00:00Z",
+        "startTime": "09:00",
+        "endTime": "11:00",
+        "topic": "Photosynthesis",
+        "activities": [
+          {
+            "type": "review",
+            "resourceId": "uuid1",
+            "resourceType": "file",
+            "duration": 60
+          },
+          {
+            "type": "flashcards",
+            "resourceId": "flashcard-uuid",
+            "resourceType": "flashcard",
+            "duration": 60
+          }
+        ],
+        "completed": false
+      }
+    ],
+    "preferences": {
+      "dailyStudyHours": 2,
+      "preferredTimes": ["morning", "evening"],
+      "breakInterval": 25,
+      "studyMethods": ["reading", "flashcards", "practice"]
+    },
+    "progress": {
+      "completedHours": 0,
+      "completedSessions": 0,
+      "totalSessions": 20
+    },
+    "createdAt": "2025-01-15T10:30:00Z",
+    "updatedAt": "2025-01-15T10:30:00Z"
+  }
+}
+```
+
 ## 7. Error Codes
 
 | Code | HTTP Status | Description |
@@ -364,6 +759,9 @@ Content-Type: application/json
 | `FILE_TOO_LARGE` | 413 | Uploaded file exceeds size limit |
 | `UNSUPPORTED_FORMAT` | 415 | File format not supported |
 | `QUOTA_EXCEEDED` | 429 | User has exceeded rate/storage limits |
+| `ANSWER_TOO_LONG` | 400 | Answer exceeds maximum word count |
+| `INVALID_DEADLINE` | 400 | Study guide deadline is in the past |
+| `INSUFFICIENT_CONTENT` | 400 | Not enough file content to generate requested items |
 | `INTERNAL_ERROR` | 500 | Unexpected server error |
 
 ## 8. Implementation Notes
@@ -377,17 +775,42 @@ Content-Type: application/json
 ### 8.2 AI Integration
 - Chat responses use streaming (Server-Sent Events)
 - Quiz generation leverages uploaded file content
+- Open-ended questions include AI-generated rubrics for consistent grading
+- Flashcard generation extracts key terms and concepts automatically
+- Study guides use AI to optimize scheduling based on learning patterns
 - Citations include file references and page numbers
 - Notes generation supports markdown formatting
 
-### 8.3 Security
+### 8.3 Open-ended Question Grading
+- AI grading uses rubric-based scoring for consistency
+- Scores are provided per criterion with detailed feedback
+- Word count validation enforced before submission
+- Grade history is maintained for progress tracking
+
+### 8.4 Flashcard Features
+- Cards can be filtered by difficulty and tags
+- Shuffle endpoint provides randomized study sessions
+- Spaced repetition algorithms can be implemented using difficulty ratings
+- Support for image-based cards planned for future releases
+
+### 8.5 Study Guide Scheduling
+- AI analyzes user preferences and available study time
+- Automatic rescheduling when sessions are missed
+- Integration with other learning resources (files, flashcards, quizzes)
+- Progress tracking with completion percentages
+- Deadline-based prioritization of topics
+
+### 8.6 Security
 - JWT tokens expire after 24 hours
 - File access is restricted to folder owners
 - Rate limiting: 100 requests per minute per user
 - All file uploads are scanned for malware
+- User answers are encrypted at rest
 
-### 8.4 Performance
+### 8.7 Performance
 - Pagination default: 20 items per page
 - File text extraction cached for 7 days
 - Chat history limited to last 100 messages
-- Search results limited to 50 items 
+- Search results limited to 50 items
+- Study guide schedules cached for quick access
+- Flashcard shuffling uses server-side randomization 
