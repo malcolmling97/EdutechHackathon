@@ -68,18 +68,18 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
       <div className="flex-grow">
         <div className={`flex items-center mb-2 h-[42px] ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
           {!isCollapsed && (
-            <SidebarLink text="Malcolm's Space" icon={UserSpaceIcon} isCollapsed={isCollapsed} isButton={false} hasHover={false} />
+            <SidebarLink text="Malcolm's Space" icon={UserSpaceIcon} isCollapsed={isCollapsed} isButton={false} hasHover={false} iconClassName="text-white" />
           )}
-          <button onClick={onToggle} className="p-1 rounded-lg text-content-secondary mr-1 cursor-pointer">
-            <SidebarToggleIcon isCollapsed={isCollapsed} className="w-4 h-4" />
+          <button onClick={onToggle} className="p-1 rounded-lg text-white mr-1 cursor-pointer">
+            <SidebarToggleIcon isCollapsed={isCollapsed} className="w-4 h-4 text-white" />
           </button>
         </div>
         <hr className="border-t border-border-primary -mx-2" />
         <nav className="flex flex-col gap-2 mt-2">
-          {/*<SidebarLink text="Resources" icon={ResourcesIcon} isCollapsed={isCollapsed} />*/}
-          <SidebarLink text="Chats" icon={ChatsIcon} isCollapsed={isCollapsed} to="/" />
-          <SidebarLink text="Notes" icon={NotesIcon} isCollapsed={isCollapsed} to="/notes"/>
-          <SidebarLink text="Study" icon={StudyIcon} isCollapsed={isCollapsed} to="/study"/>
+          {/*<SidebarLink text="Resources" icon={ResourcesIcon} isCollapsed={isCollapsed} textClassName="text-white" iconClassName="text-white" />*/}
+          <SidebarLink text="Chats" icon={ChatsIcon} isCollapsed={isCollapsed} to="/" iconClassName="text-white" />
+          <SidebarLink text="Notes" icon={NotesIcon} isCollapsed={isCollapsed} to="/notes" iconClassName="text-white" />
+          <SidebarLink text="Study" icon={StudyIcon} isCollapsed={isCollapsed} to="/study" iconClassName="text-white" />
         </nav>
         <hr className="border-t border-border-primary -mx-2 mt-2" />
 
@@ -90,11 +90,11 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
               <button
                 key={chat.id}
                 onClick={() => navigate(`/chat/${chat.id}`)}
-                className={`flex items-center gap-2 px-2 py-1 text-sm rounded hover:bg-gray-700 ${
+                className={`flex items-center gap-2 px-2 py-1 text-sm rounded hover:bg-gray-700 text-white ${
                   location.pathname.includes(chat.id) ? 'bg-gray-700' : ''
                 }`}
               >
-                💬 {chat.title}
+                <span className="text-white">💬 {chat.title}</span>
               </button>
             ))}
           </div>
@@ -103,7 +103,7 @@ const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: ()
 
       <div className="flex-shrink-0">
         <hr className="border-t border-border-primary -mx-2 mb-2" />
-        <SidebarLink text="Settings" icon={SettingsIcon} isCollapsed={isCollapsed} hasHover={false} />
+        <SidebarLink text="Settings" icon={SettingsIcon} isCollapsed={isCollapsed} hasHover={false} iconClassName="text-white" />
       </div>
     </div>
   );

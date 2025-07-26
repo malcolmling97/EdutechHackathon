@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from '../sidebar/Sidebar';
 
 const Layout = ({ children }) => {
-  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setSidebarCollapsed] = useState(true);
 
   return (
     <div className="flex h-screen bg-primary text-white">

@@ -35,7 +35,7 @@ const GenerationModal: React.FC<GenerationModalProps> = ({ onGenerate, onClose }
     <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
       <div
         className="bg-secondary border border-border-primary rounded-3xl shadow-2xl p-8 max-w-5xl w-full flex flex-col relative pointer-events-auto"
-        style={{ minWidth: 320, maxWidth: 900, height: 700 }}
+        style={{ minWidth: 320, maxWidth: 900, height: 600 }}
       >
         {/* Close button */}
         <button
@@ -99,13 +99,16 @@ const GenerationModal: React.FC<GenerationModalProps> = ({ onGenerate, onClose }
             ))}
           </div>
         </div>
-        <button
-          onClick={handleGenerate}
-          disabled={selected.length === 0}
-          className="mt-8 w-full bg-blue-600 text-white font-bold text-lg py-4 px-4 rounded-xl transition-colors disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed"
-        >
-          Enter
-        </button>
+        <div className="flex-grow" />
+        <div className="flex justify-end items-end mt-6" style={{ marginTop: 'auto' }}>
+          <button
+            onClick={handleGenerate}
+            disabled={selected.length === 0}
+            className="bg-blue-600 text-white text-base py-2 px-6 rounded hover:bg-blue-700 transition-colors disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed mr-2 mb-2"
+          >
+            Generate
+          </button>
+        </div>
       </div>
     </div>
   );

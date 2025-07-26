@@ -8,6 +8,8 @@ interface SidebarLinkProps {
   to?: string;                     // Optional route path
   isButton?: boolean;
   hasHover?: boolean;
+  textClassName?: string;
+  iconClassName?: string;
 }
 
 const SidebarLink: React.FC<SidebarLinkProps> = ({
@@ -16,7 +18,9 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
   isCollapsed,
   to,
   isButton = true,
-  hasHover = true
+  hasHover = true,
+  textClassName = '',
+  iconClassName = '',
 }) => {
   const classes = `flex items-center gap-3 px-3 py-2.5 rounded-lg text-content-secondary transition-colors 
     ${isButton ? (hasHover ? 'hover:bg-gray-700 hover:text-white' : '') : 'cursor-default'} 
@@ -24,8 +28,8 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
 
   const content = (
     <>
-      <Icon className="w-5 h-5 flex-shrink-0" />
-      {!isCollapsed && <span className="truncate">{text}</span>}
+      <Icon className={`w-5 h-5 flex-shrink-0 ${iconClassName}`} />
+      {!isCollapsed && <span className={`truncate ${textClassName}`}>{text}</span>}
     </>
   );
 
