@@ -1062,4 +1062,181 @@ def other_user_flashcards(test_db, db_session, created_space_flashcards_other_us
     db_session.commit()
     db_session.refresh(flashcard)
     
-    return flashcard 
+    return flashcard
+
+
+@pytest.fixture
+def created_space_studyguide(test_db, db_session, created_folder):
+    """Create a study guide space for testing."""
+    from app.models.space import Space
+    
+    space = Space(
+        id=uuid.uuid4(),
+        folder_id=created_folder.id,
+        type="studyguide",
+        title="Study Guide Space",
+        settings={},
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(space)
+    db_session.commit()
+    db_session.refresh(space)
+    
+    return space
+
+
+@pytest.fixture
+def created_space_studyguide_other_user(test_db, db_session, other_user_folder):
+    """Create a study guide space for another user for testing."""
+    from app.models.space import Space
+    
+    space = Space(
+        id=uuid.uuid4(),
+        folder_id=other_user_folder.id,
+        type="studyguide",
+        title="Other User's Study Guide Space",
+        settings={},
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(space)
+    db_session.commit()
+    db_session.refresh(space)
+    
+    return space
+
+
+@pytest.fixture
+def created_study_guide(test_db, db_session, created_space_studyguide, uploaded_files):
+    """Create a sample study guide for testing."""
+    from app.models.studyguide import StudyGuide
+    from datetime import datetime, timedelta
+    
+    # Create a sample schedule
+    schedule = [
+        {
+            "id": "session1",
+            "date": (datetime.utcnow() + timedelta(days=1)).isoformat() + "Z",
+            "startTime": "09:00",
+            "endTime": "11:00",
+            "topic": "Photosynthesis",
+            "activities": [
+                {
+                    "type": "review",
+                    "resourceId": str(uploaded_files[0].id),
+                    "resourceType": "file",
+                    "duration": 60
+                },
+                {
+                    "type": "flashcards",
+                    "resourceId": "flashcard-uuid",
+                    "resourceType": "flashcard",
+                    "duration": 60
+                }
+            ],
+            "completed": False
+        },
+        {
+            "id": "session2",
+            "date": (datetime.utcnow() + timedelta(days=2)).isoformat() + "Z",
+            "startTime": "14:00",
+            "endTime": "16:00",
+            "topic": "Cellular Respiration",
+            "activities": [
+                {
+                    "type": "practice",
+                    "resourceId": "quiz-uuid",
+                    "resourceType": "quiz",
+                    "duration": 120
+                }
+            ],
+            "completed": False
+        }
+    ]
+    
+    study_guide = StudyGuide(
+        id=uuid.uuid4(),
+        space_id=created_space_studyguide.id,
+        title="Final Exam Study Plan",
+        deadline=datetime.utcnow() + timedelta(days=14),
+        total_study_hours=40,
+        schedule=schedule,
+        preferences={
+            "dailyStudyHours": 2,
+            "preferredTimes": ["morning", "evening"],
+            "breakInterval": 25,
+            "studyMethods": ["reading", "flashcards", "practice"]
+        },
+        progress={
+            "completedHours": 0,
+            "completedSessions": 0,
+            "totalSessions": 2
+        },
+        file_ids=[str(uploaded_files[0].id)],
+        topics=["photosynthesis", "cellular respiration"],
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    
+    db_session.add(study_guide)
+    db_session.commit()
+    db_session.refresh(study_guide)
+    
+    return study_guide
+
+
+@pytest.fixture
+def created_study_guide_other_user(test_db, db_session, created_space_studyguide_other_user, other_user_files):
+    """Create a study guide owned by another user for permission testing."""
+    from app.models.studyguide import StudyGuide
+    from datetime import datetime, timedelta
+    
+    schedule = [
+        {
+            "id": "session1",
+            "date": (datetime.utcnow() + timedelta(days=1)).isoformat() + "Z",
+            "startTime": "10:00",
+            "endTime": "12:00",
+            "topic": "Other User's Topic",
+            "activities": [
+                {
+                    "type": "review",
+                    "resourceId": str(other_user_files[0].id),
+                    "resourceType": "file",
+                    "duration": 120
+                }
+            ],
+            "completed": False
+        }
+    ]
+    
+    study_guide = StudyGuide(
+        id=uuid.uuid4(),
+        space_id=created_space_studyguide_other_user.id,
+        title="Other User's Study Plan",
+        deadline=datetime.utcnow() + timedelta(days=7),
+        total_study_hours=20,
+        schedule=schedule,
+        preferences={
+            "dailyStudyHours": 1,
+            "preferredTimes": ["morning"],
+            "breakInterval": 20,
+            "studyMethods": ["reading"]
+        },
+        progress={
+            "completedHours": 0,
+            "completedSessions": 0,
+            "totalSessions": 1
+        },
+        file_ids=[str(other_user_files[0].id)],
+        topics=["other topic"],
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    
+    db_session.add(study_guide)
+    db_session.commit()
+    db_session.refresh(study_guide)
+    
+    return study_guide 
