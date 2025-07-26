@@ -757,4 +757,193 @@ def created_file(test_db, db_session, created_folder):
     db_session.commit()
     db_session.refresh(file)
     
-    return file 
+    return file
+
+
+@pytest.fixture
+def created_space_openended(test_db, db_session, created_folder):
+    """Create a space for open-ended questions testing."""
+    from app.models.space import Space, SpaceType
+    
+    space = Space(
+        id=uuid.uuid4(),
+        folder_id=created_folder.id,
+        type=SpaceType.openended,
+        title="Open-ended Questions Space",
+        settings={},
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(space)
+    db_session.commit()
+    db_session.refresh(space)
+    
+    return space
+
+
+@pytest.fixture
+def created_space_openended_other_user(test_db, db_session, other_user_folder):
+    """Create a space for open-ended questions testing owned by another user."""
+    from app.models.space import Space, SpaceType
+    
+    space = Space(
+        id=uuid.uuid4(),
+        folder_id=other_user_folder.id,
+        type=SpaceType.openended,
+        title="Other User's Open-ended Questions Space",
+        settings={},
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(space)
+    db_session.commit()
+    db_session.refresh(space)
+    
+    return space
+
+
+@pytest.fixture
+def created_openended(test_db, db_session, created_space_openended, uploaded_files):
+    """Create a sample open-ended question set for testing."""
+    from app.models.openended import OpenEndedQuestion
+    
+    openended = OpenEndedQuestion(
+        id=uuid.uuid4(),
+        space_id=created_space_openended.id,
+        title="Sample Essay Questions",
+        questions=[
+            {
+                "id": "q1",
+                "prompt": "Explain the process of photosynthesis in detail, including the light-dependent and light-independent reactions.",
+                "maxWords": 500,
+                "rubric": {
+                    "criteria": [
+                        {
+                            "name": "Understanding of light reactions",
+                            "weight": 0.3,
+                            "description": "Demonstrates clear understanding of photosystem I and II"
+                        },
+                        {
+                            "name": "Calvin cycle explanation",
+                            "weight": 0.3,
+                            "description": "Accurately describes the Calvin cycle steps"
+                        },
+                        {
+                            "name": "Overall coherence",
+                            "weight": 0.4,
+                            "description": "Answer is well-structured and coherent"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "q2",
+                "prompt": "Describe the structure and function of chloroplasts in plant cells.",
+                "maxWords": 300,
+                "rubric": {
+                    "criteria": [
+                        {
+                            "name": "Structural description",
+                            "weight": 0.5,
+                            "description": "Accurately describes chloroplast structure"
+                        },
+                        {
+                            "name": "Functional explanation",
+                            "weight": 0.5,
+                            "description": "Explains chloroplast function clearly"
+                        }
+                    ]
+                }
+            }
+        ],
+        file_ids=[str(uploaded_files[0].id)],
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(openended)
+    db_session.commit()
+    db_session.refresh(openended)
+    
+    return openended
+
+
+@pytest.fixture
+def created_openended_in_space(test_db, db_session, created_space, uploaded_files):
+    """Create a sample open-ended question set in a specific space for testing."""
+    from app.models.openended import OpenEndedQuestion
+    
+    openended = OpenEndedQuestion(
+        id=uuid.uuid4(),
+        space_id=created_space.id,
+        title="Sample Essay Questions in Space",
+        questions=[
+            {
+                "id": "q1",
+                "prompt": "Explain the process of photosynthesis in detail, including the light-dependent and light-independent reactions.",
+                "maxWords": 500,
+                "rubric": {
+                    "criteria": [
+                        {
+                            "name": "Understanding of light reactions",
+                            "weight": 0.3,
+                            "description": "Demonstrates clear understanding of photosystem I and II"
+                        },
+                        {
+                            "name": "Calvin cycle explanation",
+                            "weight": 0.3,
+                            "description": "Accurately describes the Calvin cycle steps"
+                        },
+                        {
+                            "name": "Overall coherence",
+                            "weight": 0.4,
+                            "description": "Answer is well-structured and coherent"
+                        }
+                    ]
+                }
+            }
+        ],
+        file_ids=[str(uploaded_files[0].id)],
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(openended)
+    db_session.commit()
+    db_session.refresh(openended)
+    
+    return openended
+
+
+@pytest.fixture
+def other_user_openended(test_db, db_session, created_space_openended_other_user, other_user_files):
+    """Create an open-ended question set owned by another user for permission testing."""
+    from app.models.openended import OpenEndedQuestion
+    
+    openended = OpenEndedQuestion(
+        id=uuid.uuid4(),
+        space_id=created_space_openended_other_user.id,
+        title="Other User's Essay Questions",
+        questions=[
+            {
+                "id": "q1",
+                "prompt": "Explain a concept from another user's content.",
+                "maxWords": 400,
+                "rubric": {
+                    "criteria": [
+                        {
+                            "name": "Content understanding",
+                            "weight": 1.0,
+                            "description": "Demonstrates understanding of the concept"
+                        }
+                    ]
+                }
+            }
+        ],
+        file_ids=[str(other_user_files[0].id)],
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(openended)
+    db_session.commit()
+    db_session.refresh(openended)
+    
+    return openended 

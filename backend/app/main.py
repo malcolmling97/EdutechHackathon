@@ -16,7 +16,7 @@ from fastapi.responses import JSONResponse
 
 from app.core.config import settings
 from app.core.database import create_tables
-from app.api.routes import auth, folders, spaces, files, chat, quiz, notes
+from app.api.routes import auth, folders, spaces, files, chat, quiz, notes, openended
 
 
 class UUIDEncoder(json.JSONEncoder):
@@ -34,6 +34,15 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         return JSONResponse(
             status_code=exc.status_code,
             content=json.loads(json.dumps(exc.detail, cls=UUIDEncoder))
+        )
+    
+    # If the detail is a dict but doesn't have "error" key, wrap it
+    if isinstance(exc.detail, dict):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "error": exc.detail
+            }
         )
     
     # Otherwise, format as a simple error
@@ -149,6 +158,22 @@ def create_application() -> FastAPI:
         prefix=f"{settings.api_v1_prefix}",
         tags=["notes"],
     )
+    
+    app.include_router(
+        openended.router,
+        prefix=f"{settings.api_v1_prefix}",
+        tags=["open-ended questions"],
+    )
+
+    app.include_router(
+        spaces.router,
+        prefix=f"{settings.api_v1_prefix}",
+        tags=["spaces"],
+    )
+    
+    @app.get("/test_route")
+    async def test_route():
+        return {"message": "Test route successful!"}
     
     return app
 
