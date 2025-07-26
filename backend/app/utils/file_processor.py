@@ -73,7 +73,7 @@ class FileProcessor:
     
     def detect_mime_type(self, file_path: str) -> str:
         """
-        Detect MIME type of file using python-magic.
+        Detect MIME type of file using python-magic, with extension override for markdown files.
         
         Args:
             file_path: Path to the file
@@ -83,7 +83,12 @@ class FileProcessor:
         """
         try:
             mime = magic.Magic(mime=True)
-            return mime.from_file(file_path)
+            detected = mime.from_file(file_path)
+            # If .md extension and detected as text/plain, override to text/markdown
+            extension = self._get_file_extension(file_path).lower()
+            if extension == '.md' and detected == 'text/plain':
+                return 'text/markdown'
+            return detected
         except Exception as e:
             logger.warning(f"Could not detect MIME type for {file_path}: {e}")
             # Fallback to extension-based detection

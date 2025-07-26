@@ -16,7 +16,7 @@ from fastapi.responses import JSONResponse
 
 from app.core.config import settings
 from app.core.database import create_tables
-from app.api.routes import auth, folders, spaces, files, chat, quiz
+from app.api.routes import auth, folders, spaces, files, chat, quiz, notes
 
 
 class UUIDEncoder(json.JSONEncoder):
@@ -142,6 +142,12 @@ def create_application() -> FastAPI:
         quiz.router,
         prefix=f"{settings.api_v1_prefix}",
         tags=["quiz"],
+    )
+    
+    app.include_router(
+        notes.router,
+        prefix=f"{settings.api_v1_prefix}",
+        tags=["notes"],
     )
     
     return app
