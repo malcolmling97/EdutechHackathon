@@ -605,4 +605,156 @@ def other_user_folder(test_db, db_session, other_user):
     db_session.commit()
     db_session.refresh(folder)
     
-    return folder 
+    return folder
+
+
+# === NOTES TESTING FIXTURES ===
+
+@pytest.fixture
+def created_space_notes(test_db, db_session, created_folder):
+    """Create a notes-type space for testing."""
+    space = Space(
+        id=uuid.uuid4(),
+        folder_id=created_folder.id,
+        type=SpaceType.notes,
+        title="Notes Space",
+        settings={},
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    
+    db_session.add(space)
+    db_session.commit()
+    db_session.refresh(space)
+    
+    return space
+
+
+@pytest.fixture
+def created_space_notes_other_user(test_db, db_session, other_user_folder):
+    """Create a notes-type space owned by another user for permission testing."""
+    space = Space(
+        id=uuid.uuid4(),
+        folder_id=other_user_folder.id,
+        type=SpaceType.notes,
+        title="Other User's Notes Space",
+        settings={},
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    
+    db_session.add(space)
+    db_session.commit()
+    db_session.refresh(space)
+    
+    return space
+
+
+@pytest.fixture
+def created_file_2(test_db, db_session, created_folder):
+    """Create a second file for testing multi-file operations."""
+    file = File(
+        id=uuid.uuid4(),
+        folder_id=created_folder.id,
+        name="test_file_2.pdf",
+        mime_type="application/pdf",
+        size=2048000,
+        path="test_file_2.pdf",
+        text_content="This is the second test file with different content. " * 50,
+        vector_ids=[],
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(file)
+    db_session.commit()
+    db_session.refresh(file)
+    
+    return file
+
+
+@pytest.fixture
+def created_file_other_user(test_db, db_session, other_user_folder):
+    """Create a file owned by another user for permission testing."""
+    file = File(
+        id=uuid.uuid4(),
+        folder_id=other_user_folder.id,
+        name="other_user_file.pdf",
+        mime_type="application/pdf",
+        size=1024000,
+        path="other_user_file.pdf",
+        text_content="This file belongs to another user and should not be accessible.",
+        vector_ids=[],
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(file)
+    db_session.commit()
+    db_session.refresh(file)
+    
+    return file
+
+
+@pytest.fixture
+def created_note(test_db, db_session, created_space_notes):
+    """Create a sample note for testing."""
+    from app.models.note import Note
+    
+    note = Note(
+        id=uuid.uuid4(),
+        space_id=created_space_notes.id,
+        format="markdown",
+        content="# Sample Notes\n\nThis is a sample note content.\n\n## Key Points\n\n- Point 1\n- Point 2\n- Point 3",
+        file_ids=[],
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    
+    db_session.add(note)
+    db_session.commit()
+    db_session.refresh(note)
+    
+    return note
+
+
+@pytest.fixture
+def created_note_other_user(test_db, db_session, created_space_notes_other_user):
+    """Create a note owned by another user for permission testing."""
+    from app.models.note import Note
+    
+    note = Note(
+        id=uuid.uuid4(),
+        space_id=created_space_notes_other_user.id,
+        format="markdown",
+        content="# Other User's Notes\n\nThis note belongs to another user.",
+        file_ids=[],
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    
+    db_session.add(note)
+    db_session.commit()
+    db_session.refresh(note)
+    
+    return note
+
+
+@pytest.fixture
+def created_file(test_db, db_session, created_folder):
+    """Create a basic file for testing."""
+    file = File(
+        id=uuid.uuid4(),
+        folder_id=created_folder.id,
+        name="test_file.pdf",
+        mime_type="application/pdf",
+        size=1024000,
+        path="test_file.pdf",
+        text_content="This is test file content for notes generation. " * 100,
+        vector_ids=[],
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(file)
+    db_session.commit()
+    db_session.refresh(file)
+    
+    return file 
