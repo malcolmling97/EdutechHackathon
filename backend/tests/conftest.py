@@ -947,3 +947,119 @@ def other_user_openended(test_db, db_session, created_space_openended_other_user
     db_session.refresh(openended)
     
     return openended 
+
+
+@pytest.fixture
+def created_space_flashcards(test_db, db_session, created_folder):
+    """Create a flashcard space for testing."""
+    from app.models.space import Space
+    
+    space = Space(
+        id=uuid.uuid4(),
+        folder_id=created_folder.id,
+        type="flashcards",
+        title="Flashcard Space",
+        settings={},
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(space)
+    db_session.commit()
+    db_session.refresh(space)
+    
+    return space
+
+
+@pytest.fixture
+def created_space_flashcards_other_user(test_db, db_session, other_user_folder):
+    """Create a flashcard space for another user for testing."""
+    from app.models.space import Space
+    
+    space = Space(
+        id=uuid.uuid4(),
+        folder_id=other_user_folder.id,
+        type="flashcards",
+        title="Other User's Flashcard Space",
+        settings={},
+        created_at=datetime.utcnow()
+    )
+    
+    db_session.add(space)
+    db_session.commit()
+    db_session.refresh(space)
+    
+    return space
+
+
+@pytest.fixture
+def created_flashcards(test_db, db_session, created_space_flashcards, uploaded_files):
+    """Create a sample flashcard deck for testing."""
+    from app.models.flashcard import Flashcard
+    
+    flashcard = Flashcard(
+        id=uuid.uuid4(),
+        space_id=created_space_flashcards.id,
+        title="Biology Terms Set 1",
+        cards=[
+            {
+                "id": "card1",
+                "front": "What is chlorophyll?",
+                "back": "A green pigment found in plants that captures light energy for photosynthesis",
+                "difficulty": "easy",
+                "tags": ["photosynthesis", "pigments"]
+            },
+            {
+                "id": "card2",
+                "front": "Where does the Calvin cycle occur?",
+                "back": "In the stroma of chloroplasts",
+                "difficulty": "medium",
+                "tags": ["calvin cycle", "chloroplasts"]
+            },
+            {
+                "id": "card3",
+                "front": "What is the main product of photosynthesis?",
+                "back": "Glucose (C6H12O6)",
+                "difficulty": "easy",
+                "tags": ["photosynthesis", "products"]
+            }
+        ],
+        file_ids=[str(uploaded_files[0].id)],
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    
+    db_session.add(flashcard)
+    db_session.commit()
+    db_session.refresh(flashcard)
+    
+    return flashcard
+
+
+@pytest.fixture
+def other_user_flashcards(test_db, db_session, created_space_flashcards_other_user, other_user_files):
+    """Create a flashcard deck owned by another user for permission testing."""
+    from app.models.flashcard import Flashcard
+    
+    flashcard = Flashcard(
+        id=uuid.uuid4(),
+        space_id=created_space_flashcards_other_user.id,
+        title="Other User's Biology Terms",
+        cards=[
+            {
+                "id": "card1",
+                "front": "What is cellular respiration?",
+                "back": "The process of breaking down glucose to produce ATP",
+                "difficulty": "medium",
+                "tags": ["respiration", "energy"]
+            }
+        ],
+        file_ids=[str(other_user_files[0].id)],
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    
+    db_session.add(flashcard)
+    db_session.commit()
+    db_session.refresh(flashcard)
+    
+    return flashcard 
