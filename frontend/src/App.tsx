@@ -17,12 +17,12 @@ function App() {
         <Routes>
           <Route path="/" element={<DashboardView />} />
           <Route path="/chat/:id" element={<ChatView />} /> {/* Accepts dynamic ID */}
-          <Route path="/study" element={<StudyView />} />
-          <Route path="/quiz" element={<QuizView />} />
-          <Route path="/notes" element={<NotesView />} />
-          <Route path ="/study-guide/content" element={<StudyGuideView/>}/>
-          <Route path="/flashcards" element={<FlashcardsView />} />
-          <Route path="/open-ended" element={<OpenEndedView />} />
+          <Route path="/study/:id" element={<StudyView />} />
+          <Route path="/quiz/:id" element={<QuizView />} />
+          <Route path="/notes/:id" element={<NotesView />} />
+          <Route path ="/study-guide/content/:id" element={<StudyGuideView/>}/>
+          <Route path="/flashcards/:id" element={<FlashcardsView />} />
+          <Route path="/open-ended/:id" element={<OpenEndedView />} />
         </Routes>
       </Layout>
     </BrowserRouter>

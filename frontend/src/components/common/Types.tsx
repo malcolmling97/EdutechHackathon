@@ -38,15 +38,18 @@ export interface SendChatOptions {
 
   export interface CreateSpacePayload {
     title: string;
-    course?: string;
+    type: 'chat' | 'notes' | 'quiz' | 'flashcards' | 'studyguide' | 'openended'| 'resources'; // strict string union
+    folderId: string;
+    settings?: Record<string, any>; // optional customization
   }
   
-  export interface CreatedSpace {
+  export type CreatedSpace = {
     id: string;
-    title: string;
     folderId: string;
-    createdAt: string;
-  }
+    type: 'chat' | 'quiz' | 'notes' | 'openended' | 'flashcards' | 'studyguide' | 'resources'; 
+    title: string;
+    settings: Record<string, any>;
+  };
 
 export interface GenerateQuizOptions {
     spaceId: string;
