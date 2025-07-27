@@ -10,6 +10,7 @@ interface SidebarLinkProps {
   hasHover?: boolean;
   textClassName?: string;
   iconClassName?: string;
+  onClick?: () => void;
 }
 
 const SidebarLink: React.FC<SidebarLinkProps> = ({
@@ -21,6 +22,7 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
   hasHover = true,
   textClassName = '',
   iconClassName = '',
+  onClick,
 }) => {
   const classes = `flex items-center gap-3 px-3 py-2.5 rounded-lg text-content-secondary transition-colors 
     ${isButton ? (hasHover ? 'hover:bg-gray-700 hover:text-white' : '') : 'cursor-default'} 
@@ -34,11 +36,11 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
   );
 
   return to ? (
-    <Link to={to} className={classes}>
+    <Link to={to} className={classes} onClick={onClick}>
       {content}
     </Link>
   ) : (
-    <div className={`${classes} cursor-pointer`}>
+    <div className={`${classes} cursor-pointer`} onClick={onClick}>
       {content}
     </div>
   );

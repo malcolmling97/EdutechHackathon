@@ -1,0 +1,5 @@
+[
+  { "id": "res1", "title": "Resource 1", "type": "PDF" },
+  { "id": "res2", "title": "Resource 2", "type": "Note" },
+  { "id": "res3", "title": "Resource 3", "type": "Link" }
+] 

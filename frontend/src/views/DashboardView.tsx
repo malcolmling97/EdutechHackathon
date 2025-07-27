@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ChatInput from '../components/chat/ChatInput';
 import DropZoneWrapper from '../components/common/DropZoneWrapper';
@@ -12,6 +12,17 @@ const DashboardView = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  useEffect(() => {
+    const CHAT_LIST_KEY = 'chat-list';
+    const storedChats = localStorage.getItem(CHAT_LIST_KEY);
+    if (storedChats) {
+      const chats = JSON.parse(storedChats);
+      if (chats.length > 0) {
+        navigate(`/chat/${chats[0].id}`);
+      }
+    }
+  }, [navigate]);
+
   const handleStartChat = async (content: string, file?: File | null) => {
     if (file) {
       handleFileDrop(file);
