@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUserAlt, FaBookOpen, FaComments, FaCog, FaStickyNote, FaBrain, FaChevronLeft, FaChevronRight, FaUpload, FaMicrophone, FaPaperclip, FaFilePdf, FaRegListAlt, FaRegClone, FaQuestionCircle, FaRegEdit, FaBars, FaAngleDoubleLeft, FaPlus } from 'react-icons/fa';
+import { FaUserAlt, FaBookOpen, FaComments, FaCog, FaStickyNote, FaBrain, FaChevronLeft, FaChevronRight, FaUpload, FaMicrophone, FaPaperclip, FaFilePdf, FaRegListAlt, FaRegClone, FaQuestionCircle, FaRegEdit, FaBars, FaAngleDoubleLeft, FaPlus, FaAngleDoubleRight } from 'react-icons/fa';
 
 export const UserSpaceIcon = ({ className = "w-5 h-5" }) => <FaUserAlt className={className} />;
 export const ResourcesIcon = ({ className = "w-5 h-5" }) => <FaBookOpen className={className} />;
@@ -17,6 +17,8 @@ export const OpenEndedIcon  = ({ className = "w-5 h-5" }) => <FaRegEdit classNam
 export const StudiesIcon   = ({ className = "w-5 h-5" }) => <FaRegListAlt className={className} />;
 export const ChevronRight   = ({ className = "w-5 h-5" }) => <FaChevronRight className={className} />;
 export const ChevronLeft   = ({ className = "w-5 h-5" }) => <FaChevronLeft className={className} />;
+export const ChevronDoubleLeftIcon = ({ className = "w-5 h-5" }) => <FaAngleDoubleLeft className={className} />;
+export const ChevronDoubleRightIcon = ({ className = "w-5 h-5" }) => <FaAngleDoubleRight className={className} />;
 export const PlusIcon = ({ className = "w-5 h-5" }) => <FaPlus className={className} />;
 
 export const SidebarToggleIcon = ({ isCollapsed, className = "w-4 h-4" }: { isCollapsed: boolean; className?: string }) => {
