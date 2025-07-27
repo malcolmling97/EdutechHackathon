@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getQuiz } from '../utils/getQuiz';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
-const QuizAttemptView = () => {
+const QuizView = () => {
   const { quizId } = useParams();
   const [quiz, setQuiz] = useState<any>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -11,6 +11,7 @@ const QuizAttemptView = () => {
   const [showExplanation, setShowExplanation] = useState(false);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
+  
 
   const token = localStorage.getItem('token') || '';
   const userId = localStorage.getItem('userId') || '';
@@ -32,7 +33,12 @@ const QuizAttemptView = () => {
     useEffect(() => {
         const load = async () => {
         try {
-            const data = await getQuiz();
+          const data = await getQuiz({
+            quizId: 'mock-quiz-id',
+            token: 'mock-token',
+            userId: 'mock-user-id',
+          });
+          console.log(data)
             setQuiz(data);
         } catch (e) {
             console.error('Failed to load quiz');
@@ -136,4 +142,4 @@ const QuizAttemptView = () => {
   );
 };
 
-export default QuizAttemptView;
+export default QuizView;

@@ -73,3 +73,20 @@ export interface GenerateQuizOptions {
     front: string;
     back: string;
   }  
+
+  type Question = {
+    id: string;
+    prompt: string;
+    choices: string[];
+    answer: string;
+    explanation?: string;
+  };
+  
+  type QuizType = {
+    id: string;
+    title: string;
+    questions: Question[];
+  };
+  
+
+  

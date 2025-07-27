@@ -4,6 +4,7 @@
   import { getSpaces } from '../../utils/getSpaces';
   import { CreatedSpace } from '../common/Types';
   import { createSpace } from '../../utils/createSpace';
+  import EditableTitle from '../common/EditableTitle';
   import {
     UserSpaceIcon, ResourcesIcon, ChatsIcon, NotesIcon, StudyIcon, SettingsIcon, SidebarToggleIcon, PlusIcon, PDFIcon, ChatAttachIcon,
   } from '../common/Icons';
@@ -17,8 +18,6 @@
     const [activeTab, setActiveTab] = useState<ActiveTab>('Chats');
     const navigate = useNavigate();
     const location = useLocation();
-    const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
-    const [editingTitle, setEditingTitle] = useState('');
 
     const getResourceIcon = (type: string) => {
       switch (type) {
@@ -184,7 +183,14 @@
                   }`}
                 >
                   <ChatsIcon className="w-4 h-4 text-white" />
-                  <span className="text-white">{chat.title}</span>
+                  <EditableTitle
+                    value={chat.title}
+                    onSave={(newTitle) => {
+                      const updated = chats.map(c => c.id === chat.id ? { ...c, title: newTitle } : c);
+                      setChats(updated);
+                      localStorage.setItem(CHAT_LIST_KEY, JSON.stringify(updated));
+                    }}
+                  />
                 </button>
               ))}
             </div>
@@ -204,9 +210,10 @@
                         folderId: 'mock-folder',
                         settings: {},
                       });
+
                       console.log('Created new note space:', newNote);
 
-                      const existingList = JSON.parse(localStorage.getItem('chat-list') || '[]');
+                      const existingList = JSON.parse(localStorage.getItem(CHAT_LIST_KEY) || '[]');
 
                       const updatedList = [
                         ...existingList,
@@ -218,7 +225,7 @@
                         }
                       ];
 
-                      localStorage.setItem('chat-list', JSON.stringify(updatedList));
+                      localStorage.setItem(CHAT_LIST_KEY, JSON.stringify(updatedList));
 
                       // Trigger sidebar reload
                       window.dispatchEvent(new CustomEvent('spaces-added'));
@@ -226,11 +233,7 @@
                       // Optional: directly update sidebar state too
                       setSpaces(prev => [...prev, newNote]);
 
-                      // Navigate
-                      navigate(`/notes/${newNote.id}`);
-
-
-                      // Go to new note
+                      // Navigate to new note
                       navigate(`/notes/${newNote.id}`);
                     } catch (err) {
                       console.error('Failed to create note:', err);
@@ -240,50 +243,33 @@
                   <PlusIcon className="w-4 h-4" />
                 </button>
               </div>
+
               {noteSpaces.map(note => (
-                <button
+                <div
                   key={note.id}
                   onClick={() => navigate(`/notes/${note.id}`)}
-                  className="flex items-center gap-2 px-2 py-1 text-sm rounded hover:bg-gray-700 text-white"
+                  tabIndex={0}
+                  className="flex items-center gap-2 px-2 py-1 text-sm rounded hover:bg-gray-700 text-white cursor-pointer"
                 >
                   <NotesIcon className="w-4 h-4 text-white" />
-                  {editingNoteId === note.id ? (
-                  <input
-                    autoFocus
-                    value={editingTitle}
-                    onChange={(e) => setEditingTitle(e.target.value)}
-                    onBlur={() => {
-                      const list = JSON.parse(localStorage.getItem('chat-list') || '[]');
-                      const updated = list.map((item: any) =>
-                        item.id === note.id ? { ...item, title: editingTitle } : item
+                  <EditableTitle
+                    value={note.title}
+                    onSave={(newTitle) => {
+                      const updated = spaces.map(s => s.id === note.id ? { ...s, title: newTitle } : s);
+                      setSpaces(updated);
+                    
+                      const existingList = JSON.parse(localStorage.getItem(CHAT_LIST_KEY) || '[]');
+                      const updatedList = existingList.map((entry: any) =>
+                        entry.id === note.id ? { ...entry, title: newTitle } : entry
                       );
-                      localStorage.setItem('chat-list', JSON.stringify(updated));
-                      window.dispatchEvent(new CustomEvent('spaces-added'));
-                      setEditingNoteId(null);
+                      localStorage.setItem(CHAT_LIST_KEY, JSON.stringify(updatedList));
                     }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        (e.target as HTMLInputElement).blur();
-                      }
-                    }}
-                    className="bg-gray-700 text-white px-1 py-0.5 rounded w-full"
                   />
-                ) : (
-                  <span
-                    className="text-white cursor-text"
-                    onClick={() => {
-                      setEditingNoteId(note.id);
-                      setEditingTitle(note.title);
-                    }}
-                  >
-                    {note.title}
-                  </span>
-                )}
-
-                </button>
+                </div>
               ))}
             </div>
           )}
+
 
           {/* Show study only if sidebar is expanded */}
           {!isCollapsed && activeTab === 'Study' && (
@@ -301,7 +287,19 @@
                   className="flex items-center gap-2 px-2 py-1 text-sm rounded hover:bg-gray-700 text-white"
                 >
                   <StudyIcon className="w-4 h-4 text-white" />
-                  <span className="text-white">{item.title}</span>
+                  <EditableTitle
+                    value={item.title}
+                    onSave={(newTitle) => {
+                      const updated = spaces.map(s => s.id === item.id ? { ...s, title: newTitle } : s);
+                      setSpaces(updated);
+
+                      const existing = JSON.parse(localStorage.getItem(CHAT_LIST_KEY) || '[]');
+                      const updatedList = existing.map((entry: any) =>
+                        entry.id === item.id ? { ...entry, title: newTitle } : entry
+                      );
+                      localStorage.setItem(CHAT_LIST_KEY, JSON.stringify(updatedList));
+                    }}
+                  />
                 </button>
               ))}
             </div>

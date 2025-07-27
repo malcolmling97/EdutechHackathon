@@ -34,13 +34,25 @@ const NotesView = () => {
   
     if (storedContent !== null) {
       setContent(storedContent);
+      setLoading(false);
     } else {
-      setContent('');
+      // 👇 Try loading from JSON if no content in localStorage
+      fetch(`/notes-${spaceId}.json`)
+        .then(res => res.json())
+        .then(data => {
+          setContent(data.data.content);
+          localStorage.setItem(`note-content-${spaceId}`, data.data.content);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Failed to load fallback note JSON:", err);
+          setContent('');
+          setLoading(false);
+        });
     }
   
     setNoteId(spaceId);
-    setLoading(false);
-  }, [spaceId]);
+  }, [spaceId]);  
 
   const debouncedSave = useCallback(
     debounce((text: string) => {

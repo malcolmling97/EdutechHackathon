@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ChatInput from '../components/chat/ChatInput';
 import DropZoneWrapper from '../components/common/DropZoneWrapper';
 import GenerationModal from '../components/common/GenerationModal';
 import { createSpace } from '../utils/createSpace';
 import { ChatMessage, CreatedSpace } from '../components/common/Types';
+import { loadMockSpaces } from '../utils/loadMockSpaces';
 
 const CHAT_LIST_KEY = 'chat-list';
 
@@ -14,6 +15,10 @@ const DashboardView = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    loadMockSpaces();
+  }, []);
+  
   const handleStartChat = async (content: string, file?: File | null) => {
     const title = content.slice(0, 30) || file?.name || 'New Chat';
 
