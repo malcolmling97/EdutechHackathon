@@ -17,6 +17,8 @@
     const [activeTab, setActiveTab] = useState<ActiveTab>('Chats');
     const navigate = useNavigate();
     const location = useLocation();
+    const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+    const [editingTitle, setEditingTitle] = useState('');
 
     const getResourceIcon = (type: string) => {
       switch (type) {
@@ -30,6 +32,8 @@
           return <ResourcesIcon className="w-4 h-4 text-white" />;
       }
     };
+
+    
 
     const [spaces, setSpaces] = useState<CreatedSpace[]>([]);
 
@@ -190,7 +194,49 @@
             <div className="mt-2 ml-2 flex flex-col gap-1">
               <div className="flex justify-between items-center mb-1">
                 <h2 className="text-sm font-semibold text-white">Notes</h2>
-                <button className="p-1 rounded-lg text-white hover:bg-gray-700">
+                <button
+                  className="p-1 rounded-lg text-white hover:bg-gray-700"
+                  onClick={async () => {
+                    try {
+                      const newNote = await createSpace({
+                        type: 'notes',
+                        title: `New Note ${noteSpaces.length + 1}`,
+                        folderId: 'mock-folder',
+                        settings: {},
+                      });
+                      console.log('Created new note space:', newNote);
+
+                      const existingList = JSON.parse(localStorage.getItem('chat-list') || '[]');
+
+                      const updatedList = [
+                        ...existingList,
+                        {
+                          id: newNote.id,
+                          title: newNote.title,
+                          type: 'notes',
+                          settings: newNote.settings || {},
+                        }
+                      ];
+
+                      localStorage.setItem('chat-list', JSON.stringify(updatedList));
+
+                      // Trigger sidebar reload
+                      window.dispatchEvent(new CustomEvent('spaces-added'));
+
+                      // Optional: directly update sidebar state too
+                      setSpaces(prev => [...prev, newNote]);
+
+                      // Navigate
+                      navigate(`/notes/${newNote.id}`);
+
+
+                      // Go to new note
+                      navigate(`/notes/${newNote.id}`);
+                    } catch (err) {
+                      console.error('Failed to create note:', err);
+                    }
+                  }}
+                >
                   <PlusIcon className="w-4 h-4" />
                 </button>
               </div>
@@ -201,7 +247,39 @@
                   className="flex items-center gap-2 px-2 py-1 text-sm rounded hover:bg-gray-700 text-white"
                 >
                   <NotesIcon className="w-4 h-4 text-white" />
-                  <span className="text-white">{note.title}</span>
+                  {editingNoteId === note.id ? (
+                  <input
+                    autoFocus
+                    value={editingTitle}
+                    onChange={(e) => setEditingTitle(e.target.value)}
+                    onBlur={() => {
+                      const list = JSON.parse(localStorage.getItem('chat-list') || '[]');
+                      const updated = list.map((item: any) =>
+                        item.id === note.id ? { ...item, title: editingTitle } : item
+                      );
+                      localStorage.setItem('chat-list', JSON.stringify(updated));
+                      window.dispatchEvent(new CustomEvent('spaces-added'));
+                      setEditingNoteId(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        (e.target as HTMLInputElement).blur();
+                      }
+                    }}
+                    className="bg-gray-700 text-white px-1 py-0.5 rounded w-full"
+                  />
+                ) : (
+                  <span
+                    className="text-white cursor-text"
+                    onClick={() => {
+                      setEditingNoteId(note.id);
+                      setEditingTitle(note.title);
+                    }}
+                  >
+                    {note.title}
+                  </span>
+                )}
+
                 </button>
               ))}
             </div>

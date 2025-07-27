@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import debounce from 'lodash.debounce';
-import { getNoteBySpaceId } from '../utils/getNotes';
-import { saveNote } from '../utils/saveNotes';
+// import { getNoteBySpaceId } from '../utils/getNotes';
+// import { saveNote } from '../utils/saveNotes';
 import { useParams } from 'react-router-dom';
 import { ChatMessage } from '../components/common/Types';
 import NoteChatInput from '../components/chat/NoteChatInput';
@@ -11,7 +11,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 const NotesView = () => {
-  const { spaceId = 'mock-space-id' } = useParams(); // mock spaceId
+  const { id: spaceId } = useParams()
   const [noteId, setNoteId] = useState('');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
@@ -24,22 +24,35 @@ const NotesView = () => {
   const userId = localStorage.getItem('userId') || '';
 
   useEffect(() => {
-    if (!spaceId) return;
-
-    getNoteBySpaceId(spaceId, token, userId)
-      .then((note) => {
-        setNoteId(note.id);
-        setContent(note.content || '# Welcome to your notes!\n\nClick anywhere to start editing!\n\n- **Bold text**\n- *Italic text*\n- `code snippets`\n\n> Blockquotes work too!\n\nType more content here...');
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    if (!spaceId) {
+      console.log("❌ No spaceId — useEffect aborted");
+      return;
+    }
+  
+    const storedContent = localStorage.getItem(`note-content-${spaceId}`);
+    console.log("📥 Loading from:", `note-content-${spaceId}`, storedContent);
+  
+    if (storedContent !== null) {
+      setContent(storedContent);
+    } else {
+      setContent('');
+    }
+  
+    setNoteId(spaceId);
+    setLoading(false);
   }, [spaceId]);
 
   const debouncedSave = useCallback(
     debounce((text: string) => {
-      if (noteId) saveNote(noteId, text, token, userId).catch(console.error);
+      if (spaceId) {
+        localStorage.setItem(`note-content-${spaceId}`, text);
+        console.log("💾 Saving to:", `note-content-${spaceId}`);
+      }
+
+      // 🌐 Uncomment below when backend save is ready
+      // if (noteId) saveNote(noteId, text, token, userId).catch(console.error);
     }, 1000),
-    [noteId, token, userId]
+    [spaceId, noteId, token, userId]
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -53,13 +66,15 @@ const NotesView = () => {
     setTimeout(() => {
       if (textareaRef.current) {
         textareaRef.current.focus();
-        textareaRef.current.setSelectionRange(textareaRef.current.value.length, textareaRef.current.value.length);
+        textareaRef.current.setSelectionRange(
+          textareaRef.current.value.length,
+          textareaRef.current.value.length
+        );
       }
     }, 0);
   };
 
   const handleTextareaBlur = () => {
-    // Add a small delay to allow for clicking on the preview
     setTimeout(() => {
       setIsEditing(false);
     }, 100);
@@ -68,7 +83,7 @@ const NotesView = () => {
   const handleSend = (content: string) => {
     const newMsg: ChatMessage = {
       id: `${Date.now()}`,
-      spaceId,
+      spaceId: spaceId!,
       role: 'user',
       content,
       createdAt: new Date().toISOString(),
@@ -77,7 +92,7 @@ const NotesView = () => {
 
     const mockResponse: ChatMessage = {
       id: `${Date.now()}-ai`,
-      spaceId,
+      spaceId: spaceId!,
       role: 'assistant',
       content: `Got it! Here's a mock reply to: "${content}"`,
       createdAt: new Date().toISOString(),
@@ -92,9 +107,9 @@ const NotesView = () => {
     <div className="flex h-full bg-neutral-900 text-white">
       <div className="flex-1 overflow-y-auto custom-scrollbar">
         <div className="max-w-4xl mx-auto px-5 py-12 h-full">
-            {loading ? (
+          {loading ? (
             <p className="text-gray-400">Loading note...</p>
-            ) : (
+          ) : (
             <div className="w-full h-full">
               {isEditing ? (
                 <textarea
@@ -150,34 +165,32 @@ const NotesView = () => {
                 </div>
               )}
             </div>
-            )}
+          )}
         </div>
       </div>
 
       <div className={`transition-all duration-300 h-full flex flex-col bg-[#1e1e1e] ${collapsed ? 'w-14' : 'w-[350px]'}`}>
-        {/* Toggle Button */}
         <div className="flex justify-start p-2 items-center h-[52px]">
-            <button
+          <button
             onClick={() => setCollapsed(prev => !prev)}
             className="text-gray-400 hover:text-white ml-2"
             title={collapsed ? 'Expand Assistant' : 'Collapse Assistant'}
-            >
+          >
             {collapsed ? <ChevronDoubleLeftIcon className="w-4 h-4" /> : <ChevronDoubleRightIcon className="w-4 h-4" />}
-            </button>
+          </button>
         </div>
 
-        {/* Chat content */}
         {!collapsed && (
-            <>
+          <>
             <div className="flex-1 overflow-auto px-2 py-2 custom-scrollbar">
-                <ChatWindow messages={messages} />
+              <ChatWindow messages={messages} />
             </div>
             <div className="p-2 border-t border-[#2a2a2a]">
-                <NoteChatInput onSend={handleSend} />
+              <NoteChatInput onSend={handleSend} />
             </div>
-            </>
+          </>
         )}
-        </div>
+      </div>
     </div>
   );
 };
