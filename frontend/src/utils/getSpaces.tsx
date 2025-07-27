@@ -3,63 +3,59 @@ import { getResources } from './getResources';
 import { getNotesList } from './getNotesList';
 import { getStudyList } from './getStudyList';
 
-/*
-export const getSpaces = async (token: string, userId: string): Promise<CreatedSpace[]> => {
-  const res = await fetch('/api/v1/spaces', {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'X-User-Id': userId,
-    },
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Failed to fetch spaces: ${err}`);
-  }
-  const json = await res.json();
-  return json.data;
-};
-*/
+const CHAT_LIST_KEY = 'chat-list';
 
 export const getSpaces = async (token: string, userId: string): Promise<CreatedSpace[]> => {
   try {
     const [resources, notes, study] = await Promise.all([
-      getResources(), // or undefined if mocked
+      getResources(),
       getNotesList(),
       getStudyList()
     ]);
 
     const now = new Date().toISOString();
 
-    const resourceSpaces = resources.map(res => ({
+    const resourceSpaces: CreatedSpace[] = resources.map(res => ({
       id: res.id,
       folderId: 'mock-folder',
-      type: 'resources' as const, // adjust this if your `res.type` maps to something more specific
+      type: 'resources',
       title: res.title,
       settings: {},
-      createdAt: now
+      createdAt: now,
     }));
 
-    const noteSpaces = notes.map(note => ({
+    const noteSpaces: CreatedSpace[] = notes.map(note => ({
       id: note.id,
       folderId: 'mock-folder',
-      type: 'notes' as const,
+      type: 'notes',
       title: note.title,
       settings: {},
-      createdAt: now
+      createdAt: now,
     }));
 
-    const studySpaces = study.map(item => ({
+    const studySpaces: CreatedSpace[] = study.map(item => ({
       id: item.id,
       folderId: 'mock-folder',
-      type: 'studyguide' as const, // or quiz, openended, flashcards depending on how you mock them
+      type: 'studyguide',
       title: item.title,
       settings: {},
-      createdAt: now
+      createdAt: now,
     }));
 
-    return [...resourceSpaces, ...noteSpaces, ...studySpaces];
+    // 👇 Get generated items from localStorage
+    const localList = JSON.parse(localStorage.getItem(CHAT_LIST_KEY) || '[]');
+
+    const localSpaces: CreatedSpace[] = localList.map((item: any): CreatedSpace => ({
+      id: item.id,
+      type: item.type || 'chat', // fallback if old entries
+      title: item.title,
+      folderId: 'mock-folder',
+      settings: item.settings || {},
+    }));
+
+    return [...resourceSpaces, ...noteSpaces, ...studySpaces, ...localSpaces];
   } catch (err) {
-    console.error('Error mocking getSpaces:', err);
+    console.error('Error merging mocked + local spaces:', err);
     return [];
   }
 };

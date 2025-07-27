@@ -5,12 +5,11 @@ import type { CreateSpacePayload, CreatedSpace } from '../components/common/Type
 export const createSpace = async (
   payload: CreateSpacePayload
 ): Promise<CreatedSpace> => {
-  // 🔁 MOCK RESPONSE – comment this out when backend is ready
   return {
     id: `space-${crypto.randomUUID()}`,
-    type: 'chat',
-    title: 'New Chat',
-    folderId: 'real-folder-id',
+    type: payload.type, // ✅ Use correct type
+    title: payload.title, // ✅ Use correct title
+    folderId: payload.folderId,
     settings: payload.settings || {},
   };
 

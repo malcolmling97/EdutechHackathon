@@ -4,6 +4,7 @@ import { ChatAttachIcon, VoiceIcon, PDFIcon } from '../common/Icons';
 interface ChatInputProps {
   onSend: (content: string, file?: File | null) => void;
   dispatchChatEvent?: boolean;
+  spaceId?: string;
   selectedFile?: File | null;
   setSelectedFile?: (file: File | null) => void;
   clearSelectedFile?: () => void;
@@ -12,6 +13,7 @@ interface ChatInputProps {
 const ChatInput: React.FC<ChatInputProps> = ({
   onSend,
   dispatchChatEvent = false,
+  spaceId,
   selectedFile,
   setSelectedFile,
   clearSelectedFile,
@@ -27,9 +29,10 @@ const ChatInput: React.FC<ChatInputProps> = ({
     setInput('');
     clearSelectedFile?.();
 
-    if (dispatchChatEvent) {
+    if (dispatchChatEvent && spaceId) {
       const event = new CustomEvent('add-chat', {
         detail: {
+          id: spaceId,
           title: (trimmed || selectedFile?.name)?.slice(0, 30) || 'New Chat',
         },
       });
@@ -77,7 +80,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
       <div className="flex justify-between items-center">
         <div className="flex gap-2">
-          {/* PDF Upload */}
           <label className="cursor-pointer p-2 hover:bg-gray-700 rounded transition">
             <PDFIcon className="w-5 h-5 text-content-secondary" />
             <input
@@ -89,18 +91,15 @@ const ChatInput: React.FC<ChatInputProps> = ({
             />
           </label>
 
-          {/* Attachment Icon */}
           <button className="p-2 hover:bg-gray-700 rounded transition">
             <ChatAttachIcon className="w-5 h-5 text-content-secondary" />
           </button>
 
-          {/* Voice Icon */}
           <button className="p-2 hover:bg-gray-700 rounded transition">
             <VoiceIcon className="w-5 h-5 text-content-secondary" />
           </button>
         </div>
 
-        {/* Send Button */}
         <button
           onClick={sendMessage}
           className="p-2 text-sm text-white bg-blue-600 rounded px-4 hover:bg-blue-700"
