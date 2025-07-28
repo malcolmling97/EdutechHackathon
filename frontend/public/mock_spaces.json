@@ -1,12 +1,12 @@
 [
   {
-    "id": "space-system-design-notes",
+    "id": "cloud-computing-notes",
     "type": "notes",
-    "title": "System Design Notes",
+    "title": "Cloud Computing Notes",
     "folderId": "mock-folder",
     "settings": {},
     "data": {
-      "content": "# 🌐 Intro to Load Balancers\n\nLoad balancers are crucial components in modern distributed systems. They distribute incoming network traffic across multiple servers to ensure no single server bears too much demand. This improves application availability, fault tolerance, and scalability.\n\n## 🔁 Types of Load Balancing Algorithms\n\n- **Round Robin**: Requests are distributed sequentially across servers.\n- **Least Connections**: Routes traffic to the server with the fewest active connections.\n- **IP Hashing**: Uses a hash of the client IP address to determine the server.\n\n## 📦 Load Balancer Layers\n\n- **Layer 4 (Transport Layer)**: Operates at the TCP/UDP level; faster but less flexible.\n- **Layer 7 (Application Layer)**: Makes routing decisions based on HTTP headers, cookies, or request data.\n\n## ☁️ Use Cases\n\n- Distribute load between microservices.\n- Automatically redirect traffic during server failures.\n- Enable blue-green deployments for zero-downtime updates."
+      "content": "# ☁️ Intro to Cloud Computing\n\nCloud computing is the on-demand delivery of IT resources over the internet. Instead of owning and maintaining physical data centers, users can access computing services like servers, storage, and databases from cloud providers.\n\n## 🧠 Key Characteristics\n\n- **On-Demand Self-Service**: Users can provision resources as needed.\n- **Broad Network Access**: Services are available over the network and accessed through standard mechanisms.\n- **Resource Pooling**: Providers serve multiple customers using multi-tenant models.\n- **Rapid Elasticity**: Resources can be scaled up or down automatically.\n- **Measured Service**: Usage is monitored, controlled, and billed based on consumption.\n\n## 🏗️ Cloud Service Models\n\n- **IaaS (Infrastructure as a Service)**: Provides virtualized computing resources (e.g., AWS EC2, Azure VMs).\n- **PaaS (Platform as a Service)**: Offers a platform to develop, run, and manage applications (e.g., Google App Engine).\n- **SaaS (Software as a Service)**: Delivers software applications over the internet (e.g., Google Workspace, Salesforce).\n\n## 🌍 Deployment Models\n\n- **Public Cloud**: Services offered over the public internet.\n- **Private Cloud**: Cloud environment dedicated to a single organization.\n- **Hybrid Cloud**: Combines public and private cloud features.\n\n## 📦 Use Cases\n\n- Hosting web applications and websites.\n- Data backup and disaster recovery.\n- Big data analytics and machine learning workloads.\n- DevOps automation and CI/CD pipelines."  
     }
   },
   {
