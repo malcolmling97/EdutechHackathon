@@ -1,0 +1,12 @@
+    {
+      "id": "space-devops-quick-tips",
+      "type": "notes",
+      "title": "DevOps Quick Tips",
+      "folderId": "mock-folder",
+      "settings": {},
+      "data": {
+        "content": "# 🚀 DevOps Quick Tips\n\nThese quick practices can help streamline your development and operations workflow:\n\n## 🔧 Automation\n\n- **CI/CD Pipelines**: Set up automated builds, tests, and deployments using tools like GitHub Actions, GitLab CI, or Jenkins.\n- **Infrastructure as Code (IaC)**: Manage cloud resources declaratively using Terraform or AWS CloudFormation.\n\n## 📊 Monitoring & Logging\n\n- **Prometheus & Grafana**: Use Prometheus for time-series metrics and Grafana for visual dashboards.\n- **ELK Stack (Elasticsearch, Logstash, Kibana)**: Centralize and visualize application logs.\n\n## 🔐 Security Best Practices\n\n- Rotate secrets using tools like HashiCorp Vault.\n- Use static code analysis tools like SonarQube.\n- Regularly patch dependencies and containers.\n\n## 🌩️ Cloud Readiness\n\n- Design for failure with redundancy and backups.\n- Use container orchestration platforms like Kubernetes for scalable deployments.\n- Optimize costs with auto-scaling and spot instances."
+      }
+    }
+
+  

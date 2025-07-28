@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom'; // ✅ import navigate & location
 import { getFlashcards } from '../utils/getFlashcards';
 import { Flashcard } from '../components/common/Types';
 import { ChevronLeft, ChevronRight } from '../components/common/Icons';
 
 const FlashcardsView = () => {
   const { spaceId = 'mock-space-id' } = useParams();
+  const navigate = useNavigate(); // ✅ init navigate
+  const location = useLocation();
+  const from = location.state?.from || null;
+
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [current, setCurrent] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -44,6 +48,12 @@ const FlashcardsView = () => {
     <div className="flex flex-col items-center justify-center h-screen text-white bg-[#121212] px-4 relative">
       {/* Top Bar */}
       <div className="absolute top-6 flex gap-4 items-center text-sm text-gray-400">
+        <button
+          onClick={() => (from ? navigate(`/study/${from}`) : navigate(-1))} // ✅ smart back navigation
+          className="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600"
+        >
+          ← Back
+        </button>
         <button className="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600">Edit</button>
         <span className="text-gray-300">|</span>
         <span className="text-gray-300">Card {current + 1} of {flashcards.length}</span>
@@ -59,10 +69,10 @@ const FlashcardsView = () => {
       {/* Card */}
       <div
         onClick={() => setFlipped((f) => !f)}
-        className="bg-[#2c2c2c] rounded-2xl shadow-xl p-12 w-full max-w-xl text-center cursor-pointer transition duration-300"
+        className="bg-[#2c2c2c] rounded-3xl shadow-2xl p-20 w-[40rem] h-[24rem] text-center cursor-pointer transition duration-300 flex items-center justify-center flex-col"
       >
-        <p className="text-xl font-semibold">{flipped ? currentCard.back : currentCard.front}</p>
-        <p className="text-xs text-gray-400 mt-2">{flipped ? 'Back' : 'Front'} - Click to flip</p>
+        <p className="text-2xl font-semibold">{flipped ? currentCard.back : currentCard.front}</p>
+        <p className="text-sm text-gray-400 mt-4">{flipped ? 'Back' : 'Front'} - Click to flip</p>
       </div>
 
       {/* Right Arrow */}

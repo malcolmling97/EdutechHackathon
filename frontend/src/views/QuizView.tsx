@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getQuiz } from '../utils/getQuiz';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const QuizView = () => {
   const { quizId } = useParams();
@@ -15,6 +16,10 @@ const QuizView = () => {
 
   const token = localStorage.getItem('token') || '';
   const userId = localStorage.getItem('userId') || '';
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || null;
 
   /*
   useEffect(() => {
@@ -51,6 +56,14 @@ const QuizView = () => {
 
   const currentQuestion = quiz.questions[currentIndex];
 
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(i => i - 1);
+      setSelected(null);
+      setShowExplanation(false);
+    }
+  };
+
   const handleSelect = (choice: string) => {
     if (selected) return; // prevent double select
 
@@ -81,6 +94,14 @@ const QuizView = () => {
 
   return (
     <div className="max-w-3xl mx-auto text-white px-4 py-12">
+      <div className="mb-4">
+      <button
+        onClick={() => from ? navigate(`/study/${from}`) : navigate(-1)}
+        className="text-sm text-blue-400 hover:underline"
+      >
+        ← Back
+      </button>
+    </div>
       <h1 className="text-3xl font-bold mb-10">{quiz.title}</h1>
 
       {!finished ? (
@@ -120,10 +141,18 @@ const QuizView = () => {
           )}
 
           {showExplanation && (
-            <div className="text-right">
+            <div className="flex justify-between">
+              {currentIndex > 0 && (
+                <button
+                  onClick={handlePrevious}
+                  className="px-6 py-2 bg-gray-600 rounded hover:bg-gray-700"
+                >
+                  ← Previous
+                </button>
+              )}
               <button
                 onClick={handleNext}
-                className="px-6 py-2 bg-blue-600 rounded hover:bg-blue-700"
+                className="px-6 py-2 bg-blue-600 rounded hover:bg-blue-700 ml-auto"
               >
                 {currentIndex === quiz.questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
               </button>

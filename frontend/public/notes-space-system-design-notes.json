@@ -1,0 +1,11 @@
+    {
+      "id": "space-system-design-notes",
+      "type": "notes",
+      "title": "System Design Notes",
+      "folderId": "mock-folder",
+      "settings": {},
+      "data": {
+        "content": "# 🌐 Intro to Load Balancers\n\nLoad balancers are crucial components in modern distributed systems. They distribute incoming network traffic across multiple servers to ensure no single server bears too much demand. This improves application availability, fault tolerance, and scalability.\n\n## 🔁 Types of Load Balancing Algorithms\n\n- **Round Robin**: Requests are distributed sequentially across servers.\n- **Least Connections**: Routes traffic to the server with the fewest active connections.\n- **IP Hashing**: Uses a hash of the client IP address to determine the server.\n\n## 📦 Load Balancer Layers\n\n- **Layer 4 (Transport Layer)**: Operates at the TCP/UDP level; faster but less flexible.\n- **Layer 7 (Application Layer)**: Makes routing decisions based on HTTP headers, cookies, or request data.\n\n## ☁️ Use Cases\n\n- Distribute load between microservices.\n- Automatically redirect traffic during server failures.\n- Enable blue-green deployments for zero-downtime updates."
+      }
+    }
+  

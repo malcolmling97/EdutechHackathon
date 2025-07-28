@@ -1,17 +1,27 @@
 [
   {
-    "id": "space-001",
+    "id": "space-system-design-notes",
     "type": "notes",
-    "title": "Notes - Photosynthesis",
+    "title": "System Design Notes",
     "folderId": "mock-folder",
     "settings": {},
     "data": {
-      "content": "# Photosynthesis\n\nPhotosynthesis is the process by which green plants, algae, and some bacteria convert light energy into chemical energy, stored in glucose. This process is essential for life on Earth as it provides the oxygen we breathe and the basis for the food chain.\n\n---\n\n## \ud83c\udf3f Overview\n\nPhotosynthesis takes place primarily in the leaves of plants, in organelles called **chloroplasts** that contain the pigment **chlorophyll**. It uses sunlight, carbon dioxide (CO\u2082), and water (H\u2082O) to produce glucose (C\u2086H\u2081\u2082O\u2086) and oxygen (O\u2082).\n\n---\n\n## \ud83d\udd2c Chemical Equation\n\n```\n6 CO\u2082 + 6 H\u2082O + light \u2192 C\u2086H\u2081\u2082O\u2086 + 6 O\u2082\n```\n\n---\n\n## \u2600\ufe0f Light-Dependent Reactions\n\n- Occur in the **thylakoid membranes** of the chloroplast.\n- Use sunlight to split water molecules, releasing oxygen.\n- Produce ATP and NADPH (energy carriers).\n\n---\n\n## \ud83c\udf31 Calvin Cycle (Light-Independent Reactions)\n\n- Takes place in the **stroma** of the chloroplast.\n- Uses ATP and NADPH to convert CO\u2082 into glucose.\n- Does not require light directly but depends on light-generated energy.\n\n---\n\n## \ud83d\udccc Importance of Photosynthesis\n\n- Produces the oxygen necessary for aerobic organisms.\n- Forms the base of most food chains.\n- Helps regulate atmospheric CO\u2082 levels.\n\n---\n\n## \ud83e\udde0 Fun Fact\n\nOnly about 1% of the solar energy reaching Earth is used in photosynthesis \u2014 but that tiny fraction powers almost all life on the planet!\n"
+      "content": "# 🌐 Intro to Load Balancers\n\nLoad balancers are crucial components in modern distributed systems. They distribute incoming network traffic across multiple servers to ensure no single server bears too much demand. This improves application availability, fault tolerance, and scalability.\n\n## 🔁 Types of Load Balancing Algorithms\n\n- **Round Robin**: Requests are distributed sequentially across servers.\n- **Least Connections**: Routes traffic to the server with the fewest active connections.\n- **IP Hashing**: Uses a hash of the client IP address to determine the server.\n\n## 📦 Load Balancer Layers\n\n- **Layer 4 (Transport Layer)**: Operates at the TCP/UDP level; faster but less flexible.\n- **Layer 7 (Application Layer)**: Makes routing decisions based on HTTP headers, cookies, or request data.\n\n## ☁️ Use Cases\n\n- Distribute load between microservices.\n- Automatically redirect traffic during server failures.\n- Enable blue-green deployments for zero-downtime updates."
+    }
+  },
+  {
+    "id": "space-devops-quick-tips",
+    "type": "notes",
+    "title": "DevOps Quick Tips",
+    "folderId": "mock-folder",
+    "settings": {},
+    "data": {
+      "content": "# 🚀 DevOps Quick Tips\n\nThese quick practices can help streamline your development and operations workflow:\n\n## 🔧 Automation\n\n- **CI/CD Pipelines**: Set up automated builds, tests, and deployments using tools like GitHub Actions, GitLab CI, or Jenkins.\n- **Infrastructure as Code (IaC)**: Manage cloud resources declaratively using Terraform or AWS CloudFormation.\n\n## 📊 Monitoring & Logging\n\n- **Prometheus & Grafana**: Use Prometheus for time-series metrics and Grafana for visual dashboards.\n- **ELK Stack (Elasticsearch, Logstash, Kibana)**: Centralize and visualize application logs.\n\n## 🔐 Security Best Practices\n\n- Rotate secrets using tools like HashiCorp Vault.\n- Use static code analysis tools like SonarQube.\n- Regularly patch dependencies and containers.\n\n## 🌩️ Cloud Readiness\n\n- Design for failure with redundancy and backups.\n- Use container orchestration platforms like Kubernetes for scalable deployments.\n- Optimize costs with auto-scaling and spot instances."
     }
   },
   {
     "id": "space-002",
-    "title": "Open Ended - Photosynthesis",
+    "title": "Cloud Computing",
     "type": "openended",
     "settings": {
       "generatedTypes": [
