@@ -7,32 +7,32 @@ export async function getGuide(spaceId: string) {
     return {
         title: 'Cloud Computing Study Guide',
         content: `
-      # ☁️ Cloud Computing
+      ☁️ Cloud Computing
       
       Cloud computing is the on-demand delivery of computing services—such as servers, storage, databases, networking, software, and analytics—over the internet (“the cloud”).
       
-      ## 🔑 Key Concepts
+      🔑 Key Concepts
       
-      - **Scalability**: Resources can be scaled up or down based on demand.
-      - **Pay-as-you-go**: Users only pay for what they use.
-      - **Global Accessibility**: Access resources from anywhere with an internet connection.
-      - **Virtualization**: Physical resources are abstracted into virtual environments.
-      - **Automation & Elasticity**: Infrastructure responds dynamically to workload changes.
+      - Scalability: Resources can be scaled up or down based on demand.
+      - Pay-as-you-go: Users only pay for what they use.
+      - Global Accessibility: Access resources from anywhere with an internet connection.
+      - Virtualization: Physical resources are abstracted into virtual environments.
+      - Automation & Elasticity**: Infrastructure responds dynamically to workload changes.
       
-      ## 🏗️ Cloud Service Models
+      🏗️ Cloud Service Models
       
-      - **IaaS** (Infrastructure as a Service): Provides virtual machines, storage, and networks (e.g., AWS EC2).
-      - **PaaS** (Platform as a Service): Offers a development platform and environment (e.g., Google App Engine).
-      - **SaaS** (Software as a Service): Delivers software applications over the internet (e.g., Dropbox, Salesforce).
+      - IaaS (Infrastructure as a Service): Provides virtual machines, storage, and networks (e.g., AWS EC2).
+      - PaaS (Platform as a Service): Offers a development platform and environment (e.g., Google App Engine).
+      - SaaS (Software as a Service): Delivers software applications over the internet (e.g., Dropbox, Salesforce).
       
-      ## 🌍 Deployment Models
+      🌍 Deployment Models
       
-      - **Public Cloud**: Services offered over the public internet.
-      - **Private Cloud**: Cloud infrastructure operated solely for a single organization.
-      - **Hybrid Cloud**: Combines public and private cloud features.
-      - **Community Cloud**: Shared infrastructure for a specific community with shared concerns.
+      - Public Cloud: Services offered over the public internet.
+      - Private Cloud: Cloud infrastructure operated solely for a single organization.
+      - Hybrid Cloud: Combines public and private cloud features.
+      - Community Cloud: Shared infrastructure for a specific community with shared concerns.
       
-      ## 🛡️ Benefits
+      🛡️ Benefits
       
       - Reduced IT costs
       - Business continuity
@@ -40,7 +40,7 @@ export async function getGuide(spaceId: string) {
       - Flexibility and scalability
       - Automatic updates
       
-      ## 📌 Summary
+      📌 Summary
       
       Cloud computing revolutionizes how businesses and individuals use technology by providing scalable, flexible, and cost-effective solutions through internet-based services. Understanding the core models and deployment types is essential for leveraging its full potential.
         `

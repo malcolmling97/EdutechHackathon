@@ -71,7 +71,9 @@ const FlashcardsView = () => {
         onClick={() => setFlipped((f) => !f)}
         className="bg-[#2c2c2c] rounded-3xl shadow-2xl p-20 w-[40rem] h-[24rem] text-center cursor-pointer transition duration-300 flex items-center justify-center flex-col"
       >
-        <p className="text-2xl font-semibold">{flipped ? currentCard.back : currentCard.front}</p>
+       <p className={flipped ? 'text-sm text-gray-300' : 'text-2xl font-bold'}>
+        {flipped ? currentCard.back : currentCard.front}
+      </p>
         <p className="text-sm text-gray-400 mt-4">{flipped ? 'Back' : 'Front'} - Click to flip</p>
       </div>
 
