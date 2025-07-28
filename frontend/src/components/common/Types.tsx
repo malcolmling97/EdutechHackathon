@@ -1,10 +1,12 @@
 export interface ChatMessage {
     id: string;
     spaceId: string;
-    role: 'user' | 'assistant';
+    role: 'user' | 'assistant' | 'system';
     content: string;
     sources?: MessageSource[]; // optional for non-file messages
     createdAt: string;
+    isLoading?: boolean;
+    isError?: boolean;
   }
   
   export interface ChatSession {
